@@ -1,4 +1,4 @@
-const http = require('http');
+import http from 'http';
 
 const server = http.createServer((req, res) => {
   const url = req.url;
@@ -22,8 +22,8 @@ const server = http.createServer((req, res) => {
   }
   // Send a HTML response with some "Page not found text
   if (url === '/create-user') {
-    const body = [];
-    req.on('data', chunk => {
+    const body: any[] = [];
+    req.on('data', (chunk) => {
       body.push(chunk);
     });
     req.on('end', () => {

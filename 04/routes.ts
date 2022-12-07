@@ -1,6 +1,7 @@
-const fs = require('fs');
+import fs from "fs";
+import { IncomingMessage, ServerResponse } from "http";
 
-const requestHandler = (req, res) => {
+export const requestHandler = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => {
   const url = req.url;
   const method = req.method;
   if (url === '/') {
@@ -12,17 +13,17 @@ const requestHandler = (req, res) => {
     res.write('</html>');
     return res.end();
   }
-  
+
   if (url === '/message' && method === 'POST') {
-    const body = [];
-    req.on('data', chunk => {
+    const body: any = [];
+    req.on('data', (chunk: any) => {
       console.log(chunk);
       body.push(chunk);
     });
     return req.on('end', () => {
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split('=')[1];
-      fs.writeFile('message.txt', message, err => {
+      fs.writeFile('message.txt', message, (err: any) => {
         res.statusCode = 302;
         res.setHeader('Location', '/');
         return res.end();
@@ -47,5 +48,4 @@ const requestHandler = (req, res) => {
 // module.exports.handler = requestHandler;
 // module.exports.someText = 'Some text';
 
-exports.handler = requestHandler;
-exports.someText = 'Some hard coded text';
+export const someText = 'Some hard coded text';
