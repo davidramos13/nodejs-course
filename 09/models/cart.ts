@@ -1,68 +1,77 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'p'.
 const p = path.join(
+  // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
   path.dirname(process.mainModule.filename),
   'data',
   'cart.json'
 );
 
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = class Cart {
-  static addProduct(id, productPrice) {
+  static addProduct(id: any, productPrice: any) {
     // Fetch the previous cart
-    fs.readFile(p, (err, fileContent) => {
+    fs.readFile(p, (err: any, fileContent: any) => {
       let cart = { products: [], totalPrice: 0 };
       if (!err) {
         cart = JSON.parse(fileContent);
       }
       // Analyze the cart => Find existing product
       const existingProductIndex = cart.products.findIndex(
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         prod => prod.id === id
       );
       const existingProduct = cart.products[existingProductIndex];
       let updatedProduct;
       // Add new product/ increase quantity
       if (existingProduct) {
+        // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
         updatedProduct = { ...existingProduct };
         updatedProduct.qty = updatedProduct.qty + 1;
         cart.products = [...cart.products];
+        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         cart.products[existingProductIndex] = updatedProduct;
       } else {
         updatedProduct = { id: id, qty: 1 };
+        // @ts-expect-error TS(2322): Type '{ id: any; qty: number; }' is not assignable... Remove this comment to see the full error message
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice = cart.totalPrice + +productPrice;
-      fs.writeFile(p, JSON.stringify(cart), err => {
+      fs.writeFile(p, JSON.stringify(cart), (err: any) => {
         console.log(err);
       });
     });
   }
 
-  static deleteProduct(id, productPrice) {
-    fs.readFile(p, (err, fileContent) => {
+  static deleteProduct(id: any, productPrice: any) {
+    fs.readFile(p, (err: any, fileContent: any) => {
       if (err) {
         return;
       }
       const updatedCart = { ...JSON.parse(fileContent) };
-      const product = updatedCart.products.find(prod => prod.id === id);
+      const product = updatedCart.products.find((prod: any) => prod.id === id);
       if (!product) {
           return;
       }
       const productQty = product.qty;
       updatedCart.products = updatedCart.products.filter(
-        prod => prod.id !== id
+        (prod: any) => prod.id !== id
       );
       updatedCart.totalPrice =
         updatedCart.totalPrice - productPrice * productQty;
 
-      fs.writeFile(p, JSON.stringify(updatedCart), err => {
+      fs.writeFile(p, JSON.stringify(updatedCart), (err: any) => {
         console.log(err);
       });
     });
   }
 
-  static getCart(cb) {
-    fs.readFile(p, (err, fileContent) => {
+  static getCart(cb: any) {
+    fs.readFile(p, (err: any, fileContent: any) => {
       const cart = JSON.parse(fileContent);
       if (err) {
         cb(null);
