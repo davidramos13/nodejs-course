@@ -38,14 +38,4 @@ export const requestHandler = (req: IncomingMessage, res: ServerResponse<Incomin
   res.end();
 };
 
-// module.exports = requestHandler;
-
-// module.exports = {
-//     handler: requestHandler,
-//     someText: 'Some hard coded text'
-// };
-
-// module.exports.handler = requestHandler;
-// module.exports.someText = 'Some text';
-
 export const someText = 'Some hard coded text';

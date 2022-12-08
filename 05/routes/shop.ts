@@ -1,6 +1,6 @@
 import path from 'path';
 import express from 'express';
-import rootDir from '../util/path';
+import rootDir from '../util/root';
 
 const router = express.Router();
 

@@ -1,10 +1,7 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Product'.
-const Product = require('../models/product');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Cart'.
-const Cart = require('../models/cart');
+import Product from '../models/product';
+import Cart from '../models/cart';
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getProducts = (req: any, res: any, next: any) => {
+export const getProducts = (req: any, res: any, next: any) => {
   Product.fetchAll((products: any) => {
     res.render('shop/product-list', {
       prods: products,
@@ -14,8 +11,7 @@ exports.getProducts = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getProduct = (req: any, res: any, next: any) => {
+export const getProduct = (req: any, res: any, next: any) => {
   const prodId = req.params.productId;
   Product.findById(prodId, (product: any) => {
     res.render('shop/product-detail', {
@@ -26,8 +22,7 @@ exports.getProduct = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getIndex = (req: any, res: any, next: any) => {
+export const getIndex = (req: any, res: any, next: any) => {
   Product.fetchAll((products: any) => {
     res.render('shop/index', {
       prods: products,
@@ -37,19 +32,15 @@ exports.getIndex = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getCart = (req: any, res: any, next: any) => {
+export const getCart = (req: any, res: any, next: any) => {
   Cart.getCart((cart: any) => {
     Product.fetchAll((products: any) => {
       const cartProducts = [];
-      // @ts-expect-error TS(2304): Cannot find name 'product'.
       for (product of products) {
         const cartProductData = cart.products.find(
-          // @ts-expect-error TS(2304): Cannot find name 'product'.
           (prod: any) => prod.id === product.id
         );
         if (cartProductData) {
-          // @ts-expect-error TS(2304): Cannot find name 'product'.
           cartProducts.push({ productData: product, qty: cartProductData.qty });
         }
       }
@@ -62,8 +53,7 @@ exports.getCart = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.postCart = (req: any, res: any, next: any) => {
+export const postCart = (req: any, res: any, next: any) => {
   const prodId = req.body.productId;
   Product.findById(prodId, (product: any) => {
     Cart.addProduct(prodId, product.price);
@@ -71,8 +61,7 @@ exports.postCart = (req: any, res: any, next: any) => {
   res.redirect('/cart');
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.postCartDeleteProduct = (req: any, res: any, next: any) => {
+export const postCartDeleteProduct = (req: any, res: any, next: any) => {
   const prodId = req.body.productId;
   Product.findById(prodId, (product: any) => {
     Cart.deleteProduct(prodId, product.price);
@@ -80,16 +69,14 @@ exports.postCartDeleteProduct = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getOrders = (req: any, res: any, next: any) => {
+export const getOrders = (req: any, res: any, next: any) => {
   res.render('shop/orders', {
     path: '/orders',
     pageTitle: 'Your Orders'
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getCheckout = (req: any, res: any, next: any) => {
+export const getCheckout = (req: any, res: any, next: any) => {
   res.render('shop/checkout', {
     path: '/checkout',
     pageTitle: 'Checkout'

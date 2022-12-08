@@ -1,15 +1,10 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
-const fs = require('fs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import root from '../util/root';
+import Cart from './cart';
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Cart'.
-const Cart = require('./cart');
-
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'p'.
 const p = path.join(
-  // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
-  path.dirname(process.mainModule.filename),
+  root,
   'data',
   'products.json'
 );
@@ -24,8 +19,7 @@ const getProductsFromFile = (cb: any) => {
   });
 };
 
-// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
-module.exports = class Product {
+export default class Product {
   description: any;
   id: any;
   imageUrl: any;

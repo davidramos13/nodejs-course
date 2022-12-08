@@ -1,8 +1,6 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Product'.
-const Product = require('../models/product');
+import Product from '../models/product';
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getAddProduct = (req: any, res: any, next: any) => {
+export const getAddProduct = (req: any, res: any, next: any) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -10,8 +8,7 @@ exports.getAddProduct = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.postAddProduct = (req: any, res: any, next: any) => {
+export const postAddProduct = (req: any, res: any, next: any) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
@@ -21,8 +18,7 @@ exports.postAddProduct = (req: any, res: any, next: any) => {
   res.redirect('/');
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getEditProduct = (req: any, res: any, next: any) => {
+export const getEditProduct = (req: any, res: any, next: any) => {
   const editMode = req.query.edit;
   if (!editMode) {
     return res.redirect('/');
@@ -41,8 +37,7 @@ exports.getEditProduct = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.postEditProduct = (req: any, res: any, next: any) => {
+export const postEditProduct = (req: any, res: any, next: any) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
@@ -59,8 +54,7 @@ exports.postEditProduct = (req: any, res: any, next: any) => {
   res.redirect('/admin/products');
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.getProducts = (req: any, res: any, next: any) => {
+export const getProducts = (req: any, res: any, next: any) => {
   Product.fetchAll((products: any) => {
     res.render('admin/products', {
       prods: products,
@@ -70,8 +64,7 @@ exports.getProducts = (req: any, res: any, next: any) => {
   });
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.postDeleteProduct = (req: any, res: any, next: any) => {
+export const postDeleteProduct = (req: any, res: any, next: any) => {
   const prodId = req.body.productId;
   Product.deleteById(prodId);
   res.redirect('/admin/products');

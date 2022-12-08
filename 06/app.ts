@@ -1,23 +1,17 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
-const path = require('path');
+import path from 'path';
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'express'.
-const express = require('express');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
-const bodyParser = require('body-parser');
+import express from 'express';
+import bodyParser from 'body-parser';
 
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'adminData'... Remove this comment to see the full error message
-const adminData = require('./routes/admin');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
-const shopRoutes = require('./routes/shop');
+import adminData from './routes/admin';
+import shopRoutes from './routes/shop';
 
 app.use(bodyParser.urlencoded({ extended: false }));
-// @ts-expect-error TS(2304): Cannot find name '__dirname'.
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/admin', adminData.routes);

@@ -1,16 +1,8 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
-const path = require('path');
+import path from 'path';
+import express from 'express';
+export const router = express.Router();
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'express'.
-const express = require('express');
-
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'rootDir'.
-const rootDir = require('../util/path');
-
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'router'.
-const router = express.Router();
-
-const products: any = [];
+export const products: any = [];
 
 // /admin/add-product => GET
 router.get('/add-product', (req: any, res: any, next: any) => {
@@ -28,8 +20,3 @@ router.post('/add-product', (req: any, res: any, next: any) => {
   products.push({ title: req.body.title });
   res.redirect('/');
 });
-
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.routes = router;
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
-exports.products = products;
