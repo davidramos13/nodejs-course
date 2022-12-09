@@ -2,11 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import root from '../util/root';
 
-const p = path.join(
-  root,
-  'data',
-  'products.json'
-);
+const p = path.join(root, 'data', 'products.json');
 
 const getProductsFromFile = (cb: any) => {
   fs.readFile(p, (err: any, fileContent: any) => {

@@ -1,6 +1,7 @@
+import { RequestHandler } from 'express';
 import Product from '../models/product';
 
-export const getAddProduct = (req: any, res: any, next: any) => {
+export const getAddProduct: RequestHandler = (req, res, next) => {
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -10,7 +11,7 @@ export const getAddProduct = (req: any, res: any, next: any) => {
   });
 };
 
-export const postAddProduct = (req: any, res: any, next: any) => {
+export const postAddProduct: RequestHandler = (req, res, next) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
@@ -20,7 +21,7 @@ export const postAddProduct = (req: any, res: any, next: any) => {
   res.redirect('/');
 };
 
-export const getProducts = (req: any, res: any, next: any) => {
+export const getProducts: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('admin/products', {
       prods: products,

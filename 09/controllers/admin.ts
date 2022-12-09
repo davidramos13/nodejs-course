@@ -1,6 +1,7 @@
+import { RequestHandler } from 'express';
 import Product from '../models/product';
 
-export const getAddProduct = (req: any, res: any, next: any) => {
+export const getAddProduct: RequestHandler = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -8,7 +9,7 @@ export const getAddProduct = (req: any, res: any, next: any) => {
   });
 };
 
-export const postAddProduct = (req: any, res: any, next: any) => {
+export const postAddProduct: RequestHandler = (req, res, next) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
@@ -18,7 +19,7 @@ export const postAddProduct = (req: any, res: any, next: any) => {
   res.redirect('/');
 };
 
-export const getEditProduct = (req: any, res: any, next: any) => {
+export const getEditProduct: RequestHandler = (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) {
     return res.redirect('/');
@@ -37,7 +38,7 @@ export const getEditProduct = (req: any, res: any, next: any) => {
   });
 };
 
-export const postEditProduct = (req: any, res: any, next: any) => {
+export const postEditProduct: RequestHandler = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
@@ -54,7 +55,7 @@ export const postEditProduct = (req: any, res: any, next: any) => {
   res.redirect('/admin/products');
 };
 
-export const getProducts = (req: any, res: any, next: any) => {
+export const getProducts: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('admin/products', {
       prods: products,
@@ -64,7 +65,7 @@ export const getProducts = (req: any, res: any, next: any) => {
   });
 };
 
-export const postDeleteProduct = (req: any, res: any, next: any) => {
+export const postDeleteProduct: RequestHandler = (req, res, next) => {
   const prodId = req.body.productId;
   Product.deleteById(prodId);
   res.redirect('/admin/products');

@@ -8,16 +8,16 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-import adminData from './routes/admin';
+import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.use((req: any, res: any, next: any) => {
+app.use((req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Page Not Found' });
 });
 

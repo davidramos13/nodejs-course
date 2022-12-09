@@ -1,6 +1,7 @@
+import { RequestHandler } from 'express';
 import Product from '../models/product';
 
-export const getProducts = (req: any, res: any, next: any) => {
+export const getProducts: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('shop/product-list', {
       prods: products,
@@ -10,7 +11,7 @@ export const getProducts = (req: any, res: any, next: any) => {
   });
 };
 
-export const getIndex = (req: any, res: any, next: any) => {
+export const getIndex: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('shop/index', {
       prods: products,
@@ -20,21 +21,21 @@ export const getIndex = (req: any, res: any, next: any) => {
   });
 };
 
-export const getCart = (req: any, res: any, next: any) => {
+export const getCart: RequestHandler = (req, res, next) => {
   res.render('shop/cart', {
     path: '/cart',
     pageTitle: 'Your Cart'
   });
 };
 
-export const getOrders = (req: any, res: any, next: any) => {
+export const getOrders: RequestHandler = (req, res, next) => {
   res.render('shop/orders', {
     path: '/orders',
     pageTitle: 'Your Orders'
   });
 };
 
-export const getCheckout = (req: any, res: any, next: any) => {
+export const getCheckout: RequestHandler = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
     pageTitle: 'Checkout'

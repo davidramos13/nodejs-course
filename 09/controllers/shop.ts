@@ -1,7 +1,8 @@
 import Product from '../models/product';
 import Cart from '../models/cart';
+import { RequestHandler } from 'express';
 
-export const getProducts = (req: any, res: any, next: any) => {
+export const getProducts: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('shop/product-list', {
       prods: products,
@@ -11,7 +12,7 @@ export const getProducts = (req: any, res: any, next: any) => {
   });
 };
 
-export const getProduct = (req: any, res: any, next: any) => {
+export const getProduct: RequestHandler = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId, (product: any) => {
     res.render('shop/product-detail', {
@@ -22,7 +23,7 @@ export const getProduct = (req: any, res: any, next: any) => {
   });
 };
 
-export const getIndex = (req: any, res: any, next: any) => {
+export const getIndex: RequestHandler = (req, res, next) => {
   Product.fetchAll((products: any) => {
     res.render('shop/index', {
       prods: products,
@@ -32,11 +33,11 @@ export const getIndex = (req: any, res: any, next: any) => {
   });
 };
 
-export const getCart = (req: any, res: any, next: any) => {
+export const getCart: RequestHandler = (req, res, next) => {
   Cart.getCart((cart: any) => {
-    Product.fetchAll((products: any) => {
+    Product.fetchAll((products: Product[]) => {
       const cartProducts = [];
-      for (product of products) {
+      for (let product of products) {
         const cartProductData = cart.products.find(
           (prod: any) => prod.id === product.id
         );
@@ -53,7 +54,7 @@ export const getCart = (req: any, res: any, next: any) => {
   });
 };
 
-export const postCart = (req: any, res: any, next: any) => {
+export const postCart: RequestHandler = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId, (product: any) => {
     Cart.addProduct(prodId, product.price);
@@ -61,7 +62,7 @@ export const postCart = (req: any, res: any, next: any) => {
   res.redirect('/cart');
 };
 
-export const postCartDeleteProduct = (req: any, res: any, next: any) => {
+export const postCartDeleteProduct: RequestHandler = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId, (product: any) => {
     Cart.deleteProduct(prodId, product.price);
@@ -69,14 +70,14 @@ export const postCartDeleteProduct = (req: any, res: any, next: any) => {
   });
 };
 
-export const getOrders = (req: any, res: any, next: any) => {
+export const getOrders: RequestHandler = (req, res, next) => {
   res.render('shop/orders', {
     path: '/orders',
     pageTitle: 'Your Orders'
   });
 };
 
-export const getCheckout = (req: any, res: any, next: any) => {
+export const getCheckout: RequestHandler = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
     pageTitle: 'Checkout'

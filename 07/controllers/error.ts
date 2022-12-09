@@ -1,3 +1,5 @@
-export const get404 = (req: any, res: any, next: any) => {
+import { RequestHandler } from "express";
+
+export const get404: RequestHandler = (req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Page Not Found' });
 };

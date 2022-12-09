@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import errorController from './controllers/error';
+import * as errorController from './controllers/error';
 
 const app = express();
 

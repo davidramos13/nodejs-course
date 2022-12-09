@@ -3,11 +3,7 @@ import path from 'path';
 import root from '../util/root';
 import Cart from './cart';
 
-const p = path.join(
-  root,
-  'data',
-  'products.json'
-);
+const p = path.join(root, 'data', 'products.json');
 
 const getProductsFromFile = (cb: any) => {
   fs.readFile(p, (err: any, fileContent: any) => {
@@ -19,13 +15,21 @@ const getProductsFromFile = (cb: any) => {
   });
 };
 
-export default class Product {
-  description: any;
-  id: any;
-  imageUrl: any;
-  price: any;
-  title: any;
-  constructor(id: any, title: any, imageUrl: any, description: any, price: any) {
+export interface IProduct {
+  description: string;
+  id: string;
+  imageUrl: string;
+  price: number;
+  title: string;
+}
+
+export default class Product implements IProduct {
+  description: string;
+  id: string;
+  imageUrl: string;
+  price: number;
+  title: string;
+  constructor(id: string, title: string, imageUrl: string, description: string, price: number) {
     this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;

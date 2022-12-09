@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import root from '../util/root';
+import { IProduct } from './product';
 
 const p = path.join(
   root,
@@ -8,32 +9,38 @@ const p = path.join(
   'cart.json'
 );
 
+interface ICartProduct {
+  id: string;
+  qty: number;
+}
+
+interface ICart {
+  products: ICartProduct[];
+  totalPrice: number;
+}
+
 export default class Cart {
-  static addProduct(id: any, productPrice: any) {
+  static addProduct(id: string, productPrice: number) {
     // Fetch the previous cart
     fs.readFile(p, (err: any, fileContent: any) => {
-      let cart = { products: [], totalPrice: 0 };
+      let cart: ICart = { products: [], totalPrice: 0 };
       if (!err) {
         cart = JSON.parse(fileContent);
       }
       // Analyze the cart => Find existing product
       const existingProductIndex = cart.products.findIndex(
-        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         prod => prod.id === id
       );
       const existingProduct = cart.products[existingProductIndex];
-      let updatedProduct;
+      let updatedProduct: ICartProduct;
       // Add new product/ increase quantity
       if (existingProduct) {
-        // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
         updatedProduct = { ...existingProduct };
         updatedProduct.qty = updatedProduct.qty + 1;
         cart.products = [...cart.products];
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         cart.products[existingProductIndex] = updatedProduct;
       } else {
         updatedProduct = { id: id, qty: 1 };
-        // @ts-expect-error TS(2322): Type '{ id: any; qty: number; }' is not assignable... Remove this comment to see the full error message
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice = cart.totalPrice + +productPrice;
@@ -43,12 +50,12 @@ export default class Cart {
     });
   }
 
-  static deleteProduct(id: any, productPrice: any) {
+  static deleteProduct(id: string, productPrice: number) {
     fs.readFile(p, (err: any, fileContent: any) => {
       if (err) {
         return;
       }
-      const updatedCart = { ...JSON.parse(fileContent) };
+      const updatedCart: ICart = { ...JSON.parse(fileContent) };
       const product = updatedCart.products.find((prod: any) => prod.id === id);
       if (!product) {
           return;
@@ -68,7 +75,7 @@ export default class Cart {
 
   static getCart(cb: any) {
     fs.readFile(p, (err: any, fileContent: any) => {
-      const cart = JSON.parse(fileContent);
+      const cart: ICart = JSON.parse(fileContent);
       if (err) {
         cb(null);
       } else {
