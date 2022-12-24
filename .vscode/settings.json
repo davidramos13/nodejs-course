@@ -1,0 +1,22 @@
+{
+  "workbench.localHistory.exclude": {
+    "03/**": true,
+    "04/**": true,
+    "05/**": true,
+    "06/**": true,
+    "07/**": true,
+    "08/**": true,
+    "09/**": true,
+    "10/**": true,
+  },
+  "files.exclude": {
+    "03/**": true,
+    "04/**": true,
+    "05/**": true,
+    "06/**": true,
+    "07/**": true,
+    "08/**": true,
+    "09/**": true,
+    "10/**": true,
+  }
+}
