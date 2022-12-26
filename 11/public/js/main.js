@@ -1,6 +1,6 @@
-const backdrop = document.querySelector('.backdrop')! as HTMLElement;
-const sideDrawer = document.querySelector('.mobile-nav')!;
-const menuToggle = document.querySelector('#side-menu-toggle')!;
+const backdrop = document.querySelector('.backdrop');
+const sideDrawer = document.querySelector('.mobile-nav');
+const menuToggle = document.querySelector('#side-menu-toggle');
 
 function backdropClickHandler() {
   backdrop.style.display = 'none';

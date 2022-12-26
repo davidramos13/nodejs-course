@@ -1,12 +1,13 @@
-import mysql from "mysql2";
+import path from "path";
+import { Sequelize } from "sequelize-typescript";
 
-const pool = mysql.createPool({
+const modelsPath = path.join(__dirname, '..', 'models');
+
+const db = new Sequelize('udemynode', 'root', 'root', {
+  dialect: 'mysql',
   host: 'localhost',
   port: 3316,
-  user: 'root',
-  database: 'udemynode',
-  password: 'root',
+  models: [modelsPath],
 });
 
-export default pool.promise();
-
+export default db;
