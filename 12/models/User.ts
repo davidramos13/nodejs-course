@@ -1,62 +1,93 @@
-import { Column, CreatedAt, HasMany, HasOne, Model, Scopes, Table, UpdatedAt } from "sequelize-typescript";
-import Cart from "./Cart";
-import Order from "./Order";
+import { Document, ObjectId, WithId } from "mongodb";
+import { getDb } from "../util/db";
 import Product from "./Product";
 
-@Table
-class User extends Model<User> {
-  @Column
+type CartItem = { productId: ObjectId, quantity: number };
+type Cart = { items: CartItem[] };
+
+class User {
+  _id?: ObjectId;
   name!: string;
-
-  @Column
   email!: string;
+  cart!: Cart;
 
-  @HasOne(() =>  Cart)
-  cart: Cart;
+  constructor(name: string, email: string, cart: Cart, id?: ObjectId) {
+    this.name = name;
+    this.email = email;
+    this.cart = cart; // {items: []}
+    this._id = id;
+  }
 
-  @HasMany(() => Product)
-  products: Product[];
+  async save() {
+    const db = getDb();
+    await db.collection('users').insertOne(this);
+  }
 
-  @HasMany(() => Order)
-  orders: Order[];
+  static async findById(id: string) {
+    const db = getDb();
+    const user = await db.collection('users').findOne({ _id: new ObjectId(id) });
+    return user;
+  }
 
-  @CreatedAt
-  @Column
-  createdAt!: Date;
+  async addToCart(product: WithId<Document>) {
+    const cartProductIndex = this.cart.items.findIndex(cp => {
+      return cp.productId.toString() === product._id.toString();
+    });
+    let newQuantity = 1;
+    const updatedCartItems: CartItem[] = [...this.cart.items];
 
-  @UpdatedAt
-  @Column
-  updatedAt!: Date;
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: new ObjectId(product._id),
+        quantity: newQuantity
+      });
+    }
+    const updatedCart = { items: updatedCartItems };
+    const db = getDb();
+    await db.collection('users').updateOne({ _id: this._id }, { $set: { cart: updatedCart } });
+  }
+
+  async getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map(i => i.productId);
+    const products = await db.collection('products').find({ _id: { $in: productIds } }).toArray();
+    const data = products.map(p => {
+      const quantity = this.cart.items.find(i => i.productId.toString() === p._id.toString()).quantity;
+      return { ...p, quantity };
+    });
+    return data;
+  }
+
+  async deleteItemFromCart(productId: string) {
+    const updatedCartItems = this.cart.items.filter(item => {
+      return item.productId.toString() !== productId;
+    });
+    const updatedCartData = { cart: { items: updatedCartItems } };
+    const db = getDb();
+    await db.collection('users').updateOne({ _id: this._id }, { $set: updatedCartData });
+  }
+
+  async addOrder() {
+    const db = getDb();
+    const products = await this.getCart();
+
+    const user = { _id: this._id, name: this.name };
+    const order = { items: products, user };
+
+    await db.collection('orders').insertOne(order);
+    this.cart = { items: [] };
+
+    await db.collection('users').updateOne({ _id: this._id }, { $set: { cart: { items: [] } } });
+  }
+
+  async getOrders() {
+    const db = getDb();
+    const orders = await db.collection('orders').find({ 'user._id': this._id }).toArray();
+    return orders;
+  }
 }
 
 export default User;
-
-// import { DataTypes, Model, Optional } from "sequelize";
-// import db from "../util/db";
-
-// interface IUser {
-//   id: number;
-//   name: string;
-//   email: string;
-// }
-
-// export type UserModel = Model<IUser, Optional<IUser, 'id'>>;
-
-// const User = db.define<UserModel>('user', {
-//   id: {
-//     type: DataTypes.INTEGER,
-//     autoIncrement: true,
-//     allowNull: false,
-//     primaryKey: true,
-//   },
-//   name: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-//   email: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-// });
-
-// export default User;

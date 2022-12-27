@@ -1,31 +1,51 @@
-import { Column, CreatedAt, DataType, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
-import User from "./User";
+import { ObjectId } from "mongodb";
+import { getDb } from "../util/db";
 
-@Table
-class Product extends Model<Product> {
-  @Column
+class Product {
+  _id?: ObjectId;
   title!: string;
-
-  @Column(DataType.DOUBLE)
   price!: number;
-
-  @Column
-  imageUrl!: string;
-
-  @Column
   description!: string;
+  imageUrl!: string;
+  userId!: ObjectId;
 
-  @ForeignKey(() => User)
-  @Column
-  userId!: number;
+  constructor(title: string, price: number, description: string, imageUrl: string, userId: ObjectId, id?: string) {
+    this.title = title;
+    this.price = price;
+    this.description = description;
+    this.imageUrl = imageUrl;
+    this.userId = userId;
+    this._id = id ? new ObjectId(id) : undefined;
+  }
 
-  @CreatedAt
-  @Column
-  createdAt!: Date;
+  async save() {
+    const db = getDb();
+    const collection = db.collection('products');
 
-  @UpdatedAt
-  @Column
-  updatedAt!: Date;
+    if (this._id) {
+      await collection.updateOne({ _id: this._id }, { $set: this });
+    } else {
+      await collection.insertOne(this);
+    }
+  }
+
+  static async fetchAll() {
+    const db = getDb();
+    const products = await db.collection('products').find().toArray();
+    return products;
+  }
+
+  static async findById(id: string) {
+    const db = getDb();
+    const product = await db.collection('products')
+      .find({ _id: new ObjectId(id) }).next();
+    return product;
+  }
+
+  static async deleteById(id: string) {
+    const db = getDb();
+    await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+  }
 }
 
 export default Product;

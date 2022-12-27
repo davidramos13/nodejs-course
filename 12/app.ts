@@ -1,7 +1,7 @@
 import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
-import db from './util/db';
+import { mongoConnect } from './util/db';
 
 import * as errorController from './controllers/error';
 
@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  const user = await User.findByPk(1);
-  req.user = user;
+  const user = await User.findById('63aa2deb365384a83ba424c8');
+  req.user = new User(user.name, user.email, user.cart, user._id);
   next();
 });
 
@@ -30,14 +30,10 @@ app.use(errorController.get404);
 
 const load = async () => {
   try {
-    // await db.sync({ force: true });
-    await db.sync();
-    let user = await User.findByPk(1);
-    if (!user) {
-      user = await User.create({ name: 'David Ramos', email: 'dramos@klagan.com' });
-      user.$create('cart', {});
-    }
+    await mongoConnect();
     app.listen(3000);
+    console.log('SERVER READY');
+
   } catch (ex) {
     console.log(ex);
   }

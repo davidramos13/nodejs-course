@@ -1,13 +1,18 @@
-import path from "path";
-import { Sequelize } from "sequelize-typescript";
+import { Db, MongoClient } from 'mongodb';
 
-const modelsPath = path.join(__dirname, '..', 'models');
+const connStr = '***REMOVED***?retryWrites=true&w=majority';
 
-const db = new Sequelize('udemynode', 'root', 'root', {
-  dialect: 'mysql',
-  host: 'localhost',
-  port: 3316,
-  models: [modelsPath],
-});
+let _db: Db;
 
-export default db;
+export const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw 'No database found!';
+};
+
+export const mongoConnect = async () => {
+  const client = new MongoClient(connStr);
+  await client.connect();
+  _db = client.db();
+};

@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express';
 import Product from '../models/Product';
-import db from '../util/db';
 
 export const getAddProduct: RequestHandler = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -11,13 +10,9 @@ export const getAddProduct: RequestHandler = (req, res, next) => {
 };
 
 export const postAddProduct: RequestHandler = async (req, res, next) => {
-  if (!req.user) return;
   const { title, imageUrl, price, description } = req.body;
-
-
-  await req.user.$create('product', { title, price, imageUrl, description });
-  // createProduct inside req.user is not typed
-  // $create allows to call "createProduct" based on definition here
+  const product = new Product(title, price, description, imageUrl, req.user._id);
+  await product.save();
 
   res.redirect('/');
 };
@@ -28,9 +23,9 @@ export const getEditProduct: RequestHandler = async (req, res, next) => {
     return res.redirect('/');
   }
   const prodId = req.params.productId;
-  const model = await Product.findByPk(prodId);
+  const product = await Product.findById(prodId);
 
-  if (!model) {
+  if (!product) {
     return res.redirect('/');
   }
 
@@ -38,7 +33,7 @@ export const getEditProduct: RequestHandler = async (req, res, next) => {
     pageTitle: 'Edit Product',
     path: '/admin/edit-product',
     editing: editMode,
-    product: model.dataValues
+    product: product
   });
 };
 
@@ -48,20 +43,17 @@ export const postEditProduct: RequestHandler = async (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  const model = await Product.findByPk(prodId);
+  const product = new Product(title, price, description, imageUrl, prodId);
 
-  if (!model) return;
-
-  await model.update({ title, price, imageUrl, description });
-  console.log('Updated Product!');
+  await product.save();
 
   res.redirect('/admin/products');
 };
 
 export const getProducts: RequestHandler = async (req, res, next) => {
-  const rows = await req.user.$get('products');
+  const products = await Product.fetchAll();
   res.render('admin/products', {
-    prods: rows,
+    prods: products,
     pageTitle: 'Admin Products',
     path: '/admin/products'
   });
@@ -69,8 +61,6 @@ export const getProducts: RequestHandler = async (req, res, next) => {
 
 export const postDeleteProduct: RequestHandler = async (req, res, next) => {
   const prodId = req.body.productId;
-  const productModel = await Product.findByPk(prodId);
-  await productModel.destroy();
-  console.log('Deleted Product!');
+  await Product.deleteById(prodId);
   res.redirect('/admin/products');
 };
