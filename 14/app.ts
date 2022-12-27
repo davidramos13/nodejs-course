@@ -6,6 +6,7 @@ import * as errorController from './controllers/error';
 
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
+import authRoutes from './routes/auth';
 
 import User from './models/User';
 import { connect } from './util/db';
@@ -26,6 +27,7 @@ app.use(async (req, res, next) => {
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
