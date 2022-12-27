@@ -1,4 +1,5 @@
-import User from "../../models/User";
+import { HydratedDocument } from "mongoose";
+import { IUser, IUserMethods } from "../../models/User";
 
 // to make the file a module and avoid the TypeScript error
 export {}
@@ -6,7 +7,7 @@ export {}
 declare global {
   namespace Express {
     export interface Request {
-      user?: User;
+      user?: HydratedDocument<IUser, IUserMethods>;
     }
   }
 }

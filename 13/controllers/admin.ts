@@ -11,7 +11,7 @@ export const getAddProduct: RequestHandler = (req, res, next) => {
 
 export const postAddProduct: RequestHandler = async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(title, price, description, imageUrl, req.user._id);
+  const product = new Product({ title, price, description, imageUrl, userId: req.user });
   await product.save();
 
   res.redirect('/');
@@ -38,20 +38,20 @@ export const getEditProduct: RequestHandler = async (req, res, next) => {
 };
 
 export const postEditProduct: RequestHandler = async (req, res, next) => {
-  const prodId = req.body.productId;
-  const title = req.body.title;
-  const price = req.body.price;
-  const imageUrl = req.body.imageUrl;
-  const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl, prodId);
+  const { productId, ...values } = req.body;
 
-  await product.save();
+  const product = await Product.findById(productId);
+  Object.assign(product, { ...values });
+  await product.save()
 
   res.redirect('/admin/products');
 };
 
 export const getProducts: RequestHandler = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
+  //  .select('title price -_id').populate('userId');
+  console.log(products);
+
   res.render('admin/products', {
     prods: products,
     pageTitle: 'Admin Products',
@@ -61,6 +61,6 @@ export const getProducts: RequestHandler = async (req, res, next) => {
 
 export const postDeleteProduct: RequestHandler = async (req, res, next) => {
   const prodId = req.body.productId;
-  await Product.deleteById(prodId);
+  await Product.findByIdAndRemove(prodId);
   res.redirect('/admin/products');
 };
