@@ -12,7 +12,6 @@ export const getProducts: RequestHandler = async (req, res, next) => {
     prods: products,
     pageTitle: 'All Products',
     path: '/products',
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -24,7 +23,6 @@ export const getProduct: RequestHandler = async (req, res, next) => {
     product: product,
     pageTitle: product.title,
     path: '/products',
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -35,7 +33,6 @@ export const getIndex: RequestHandler = async (req, res, next) => {
     prods: products,
     pageTitle: 'Shop',
     path: '/',
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -46,7 +43,6 @@ export const getCart: RequestHandler = async (req, res, next) => {
     path: '/cart',
     pageTitle: 'Your Cart',
     products: user.cart.items,
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -68,13 +64,13 @@ export const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
 export const postOrder: RequestHandler = async (req, res, next) => {
   const user = await req.user.populate<{ cart: Cart<ProductWithDoc> }>('cart.items.productId');
 
-  const { name, cart: { items } } = user;
+  const { email, cart: { items } } = user;
   const products = items.map(i => ({
     quantity: i.quantity,
     product: { ...i.productId._doc },
   }));
 
-  const order = new Order({ user: { name, userId: user }, products });
+  const order = new Order({ user: { email, userId: user }, products });
   await order.save();
   await user.clearCart();
 
@@ -88,7 +84,6 @@ export const getOrders: RequestHandler = async (req, res, next) => {
     path: '/orders',
     pageTitle: 'Your Orders',
     orders: orders,
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -96,6 +91,5 @@ export const getCheckout: RequestHandler = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
     pageTitle: 'Checkout',
-    isAuthenticated: req.session.isLoggedIn
   });
 };

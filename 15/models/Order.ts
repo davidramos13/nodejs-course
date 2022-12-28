@@ -10,7 +10,7 @@ export interface IOrder {
     };
     quantity: number;
   }[];
-  user: { name: string; userId: Types.ObjectId; };
+  user: { email: string; userId: Types.ObjectId; };
 };
 
 const schema = new Schema<IOrder>({
@@ -19,7 +19,7 @@ const schema = new Schema<IOrder>({
     quantity: { type: Number, required: true }
   }],
   user: {
-    name: { type: String, required: true },
+    email: { type: String, required: true },
     userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
   }
 });
