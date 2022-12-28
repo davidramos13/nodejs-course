@@ -5,7 +5,8 @@ export const getAddProduct: RequestHandler = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false
+    editing: false,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -33,7 +34,8 @@ export const getEditProduct: RequestHandler = async (req, res, next) => {
     pageTitle: 'Edit Product',
     path: '/admin/edit-product',
     editing: editMode,
-    product: product
+    product: product,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -55,7 +57,8 @@ export const getProducts: RequestHandler = async (req, res, next) => {
   res.render('admin/products', {
     prods: products,
     pageTitle: 'Admin Products',
-    path: '/admin/products'
+    path: '/admin/products',
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 

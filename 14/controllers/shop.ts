@@ -11,7 +11,8 @@ export const getProducts: RequestHandler = async (req, res, next) => {
   res.render('shop/product-list', {
     prods: products,
     pageTitle: 'All Products',
-    path: '/products'
+    path: '/products',
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -22,7 +23,8 @@ export const getProduct: RequestHandler = async (req, res, next) => {
   res.render('shop/product-detail', {
     product: product,
     pageTitle: product.title,
-    path: '/products'
+    path: '/products',
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -32,7 +34,8 @@ export const getIndex: RequestHandler = async (req, res, next) => {
   res.render('shop/index', {
     prods: products,
     pageTitle: 'Shop',
-    path: '/'
+    path: '/',
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -42,7 +45,8 @@ export const getCart: RequestHandler = async (req, res, next) => {
   res.render('shop/cart', {
     path: '/cart',
     pageTitle: 'Your Cart',
-    items: user.cart.items,
+    products: user.cart.items,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -74,6 +78,8 @@ export const postOrder: RequestHandler = async (req, res, next) => {
   const order = new Order({ user: { name, userId: user }, products });
   await order.save();
   await user.clearCart();
+
+  res.redirect('/orders');
 };
 
 export const getOrders: RequestHandler = async (req, res, next) => {
@@ -82,13 +88,15 @@ export const getOrders: RequestHandler = async (req, res, next) => {
   res.render('shop/orders', {
     path: '/orders',
     pageTitle: 'Your Orders',
-    orders: orders
+    orders: orders,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
 export const getCheckout: RequestHandler = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
-    pageTitle: 'Checkout'
+    pageTitle: 'Checkout',
+    isAuthenticated: req.session.isLoggedIn
   });
 };
