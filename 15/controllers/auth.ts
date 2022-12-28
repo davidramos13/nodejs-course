@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 
 export const getLogin: RequestHandler = (req, res, next) => {
+  const flashMessages = req.flash('error');
+
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: req.flash('error')
+    errorMessage: flashMessages.length === 0 ? null : flashMessages
   });
 };
 
@@ -33,9 +35,12 @@ export const postLogin: RequestHandler = async (req, res, next) => {
 };
 
 export const getSignup: RequestHandler = (req, res, next) => {
+  const flashMessages = req.flash('error');
+
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
+    errorMessage: flashMessages.length === 0 ? null : flashMessages
   });
 };
 
@@ -44,6 +49,7 @@ export const postSignup: RequestHandler = async (req, res, next) => {
   let user = await User.findOne({ email });
 
   if (user) {
+    req.flash('error', 'Email exists, pick a different one.');
     return res.redirect('/signup');
   }
 
