@@ -41,6 +41,11 @@ export const postEditProduct: RequestHandler = async (req, res, next) => {
   const { productId, ...values } = req.body;
 
   const product = await Product.findById(productId);
+
+  if (product.userId.toString() !== req.user._id.toString()) {
+    return res.redirect('/');
+  }
+
   Object.assign(product, { ...values });
   await product.save()
 
@@ -48,7 +53,7 @@ export const postEditProduct: RequestHandler = async (req, res, next) => {
 };
 
 export const getProducts: RequestHandler = async (req, res, next) => {
-  const products = await Product.find();
+  const products = await Product.find({ userId: req.user._id });
   //  .select('title price -_id').populate('userId');
 
   res.render('admin/products', {
@@ -60,6 +65,6 @@ export const getProducts: RequestHandler = async (req, res, next) => {
 
 export const postDeleteProduct: RequestHandler = async (req, res, next) => {
   const prodId = req.body.productId;
-  await Product.findByIdAndRemove(prodId);
+  await Product.deleteOne({ _id: prodId, userId: req.user._id });
   res.redirect('/admin/products');
 };

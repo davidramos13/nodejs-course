@@ -13,6 +13,8 @@ export interface IUser {
   email: string;
   password: string;
   cart: Cart<Types.ObjectId>;
+  resetToken?: string;
+  resetTokenExpiration?: number;
 }
 
 export interface IUserMethods {
@@ -26,6 +28,8 @@ type UserModel = Model<IUser, {}, IUserMethods>;
 const schema = new Schema<IUser, UserModel, IUserMethods>({
   email: { type: String, required: true },
   password: { type: String, required: true },
+  resetToken: String,
+  resetTokenExpiration: Number,
   cart: {
     items: [{
       productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
