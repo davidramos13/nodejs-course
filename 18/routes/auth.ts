@@ -8,23 +8,28 @@ const router = express.Router();
 
 router.get('/login', authController.getLogin);
 
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    body('email').isEmail().withMessage('Please enter a valid email address.').normalizeEmail(),
+    body('password', 'Password has to be valid.').isLength({ min: 5 }).isAlphanumeric().trim()
+  ], authController.postLogin
+);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/signup',
-  [
-    check('email').isEmail().withMessage('Please enter a valid email').custom(async (value, { req }) => {
-      const user = await User.findOne({ email: value });
-      if (user) throw new Error('Email exists already, pick a different one.');
-    }),
-    body('password', 'Please use an alphanumeric password with min 5 characters').isLength({ min: 5 }).isAlphanumeric(),
+router.post('/signup', [
+    check('email').isEmail().withMessage('Please enter a valid email.')
+      .custom(async (value, { req }) => {
+        const user = await User.findOne({ email: value });
+        if (user) throw new Error('Email exists already, pick a different one.');
+      }).normalizeEmail(),
+    body('password', 'Please enter a password with only numbers and text and at least 5 characters.')
+      .isLength({ min: 5 }).isAlphanumeric().trim(),
     body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.password) throw new Error('Passwords must match!');
+      if (value !== req.body.password) throw new Error('Passwords have to match!');
       return true;
     })
-  ],
-  authController.postSignup);
+  ], authController.postSignup
+);
 
 router.get('/reset', authController.getReset);
 
