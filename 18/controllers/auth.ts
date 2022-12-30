@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 import nodemailer from "nodemailer";
 import * as crypto from 'crypto';
+import { validationResult } from 'express-validator/check';
 
 const transport = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
@@ -56,16 +57,20 @@ export const getSignup: RequestHandler = (req, res, next) => {
 };
 
 export const postSignup: RequestHandler = async (req, res, next) => {
-  const { email, password } = req.body;
-  let user = await User.findOne({ email });
+  const { email, password, confirmPassword } = req.body;
 
-  if (user) {
-    req.flash('error', 'Email exists, pick a different one.');
-    return res.redirect('/signup');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: errors.array()[0].msg,
+      oldInput: { email, password, confirmPassword }
+    });
   }
 
   const hashPassword = await bcrypt.hash(password, 12);
-  user = new User({ email, password: hashPassword, cart: { items: [] } });
+  const user = new User({ email, password: hashPassword, cart: { items: [] } });
   await user.save();
   transport.sendMail({
     to: email,
