@@ -1,17 +1,19 @@
 import path from 'path';
-import express, { NextFunction } from 'express';
+import express, { NextFunction, Request } from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import mongoDbSession from 'connect-mongodb-session';
 import csrf from "csurf";
 import flash from "connect-flash";
+import multer from "multer";
 
 import * as errorController from './controllers/error';
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
 import authRoutes from './routes/auth';
 import User from './models/User';
+import { FileFilterFn } from './util/interfaces';
 
 const CONNECTIONSTRING = '***REMOVED***';
 
@@ -21,11 +23,24 @@ const store = new MongoDBStore({ uri: CONNECTIONSTRING, collection: 'sessions' }
 
 const csrfProtection = csrf();
 
+const fileStore = multer.diskStorage({ destination: (req, file, cb) => {
+  cb(null, 'images');
+}, filename: (req, file, cb) => {
+  cb(null, new Date().toISOString() + '-' + file.originalname);
+}});
+
+const fileFilter: FileFilterFn = (req, file, cb) => {
+  const isImage = ['image/png', 'image/jpg', 'image/jpeg'].includes(file.mimetype);
+  cb(null, isImage);
+};
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStore, fileFilter }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(session({
   secret: 'longStringValue',
   resave: false,
