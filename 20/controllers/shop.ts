@@ -1,8 +1,12 @@
+import fs from 'fs';
+import path from 'path';
+import { HydratedDocument } from 'mongoose';
+import { RequestHandler } from 'express';
+import PDFDocument from 'pdfkit';
+
 import Product, { IProduct, ProductWithDoc } from '../models/Product';
 // import Cart from '../models/cart';
-import { RequestHandler } from 'express';
 import Order from '../models/Order';
-import { HydratedDocument } from 'mongoose';
 import { Cart } from '../models/User';
 
 export const getProducts: RequestHandler = async (req, res, next) => {
@@ -87,9 +91,40 @@ export const getOrders: RequestHandler = async (req, res, next) => {
   });
 };
 
-export const getCheckout: RequestHandler = (req, res, next) => {
-  res.render('shop/checkout', {
-    path: '/checkout',
-    pageTitle: 'Checkout',
+export const getInvoice: RequestHandler = async (req, res, next) => {
+  const orderId = req.params.orderId;
+
+  const order = await Order.findById(orderId);
+  if (order.user.userId.toString() !== req.user._id.toString()) {
+    return next(new Error('Unauthorized'));
+  }
+
+  const invoiceName = `invoice-${orderId}.pdf`;
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+
+  const pdfDoc = new PDFDocument();
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  pdfDoc.pipe(res);
+
+  pdfDoc.fontSize(26).text('Invoice', { underline: true });
+  pdfDoc.text('--------------------');
+
+  let totalPrice = 0;
+  order.products.forEach(prod => {
+    totalPrice += prod.product.price;
+    pdfDoc.fontSize(14).text(`${prod.product.title} - ${prod.quantity} x $${prod.product.price}`);
   });
+
+  pdfDoc.text('----');
+  pdfDoc.fontSize(20).text(`Total Price: $${totalPrice}`);
+  pdfDoc.end();
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
+
+  // reading pdf instead of creating
+  // const file = await fs.promises.readFile(invoicePath);
+  // const file = fs.createReadStream(invoicePath);
+
+  // file.pipe(res);
 };

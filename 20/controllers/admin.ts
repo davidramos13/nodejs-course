@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
-import Product from '../models/Product';
+import fs from 'fs';
 import { validationResult } from 'express-validator/check';
+import Product from '../models/Product';
 
 export const getAddProduct: RequestHandler = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -97,6 +98,7 @@ export const postEditProduct: RequestHandler = async (req, res, next) => {
   }
 
   if (image) {
+    fs.promises.unlink(product.imageUrl);
     product.imageUrl = image.path;
   }
 
@@ -119,6 +121,14 @@ export const getProducts: RequestHandler = async (req, res, next) => {
 
 export const postDeleteProduct: RequestHandler = async (req, res, next) => {
   const prodId = req.body.productId;
-  await Product.deleteOne({ _id: prodId, userId: req.user._id });
+  const product = await Product.findById(prodId);
+
+  if (!product) {
+    return res.redirect('/');
+  }
+
+  fs.promises.unlink(product.imageUrl);
+  await product.delete();
+
   res.redirect('/admin/products');
 };
