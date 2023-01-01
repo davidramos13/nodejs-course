@@ -8,14 +8,27 @@ import Product, { IProduct, ProductWithDoc } from '../models/Product';
 // import Cart from '../models/cart';
 import Order from '../models/Order';
 import { Cart } from '../models/User';
+import { totalmem } from 'os';
+
+const ITEMS_PER_PAGE = 2;
 
 export const getProducts: RequestHandler = async (req, res, next) => {
-  const products = await Product.find();
+  const count = await Product.find().countDocuments();
+
+  const page = parseInt(req.query.page?.toString() || '1');
+  const products = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
 
   res.render('shop/product-list', {
     prods: products,
     pageTitle: 'All Products',
     path: '/products',
+    totalProducts: count,
+    currentPage: page,
+    hasNextPage: ITEMS_PER_PAGE * page < count,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    previousPage: page - 1,
+    lastPage: Math.ceil(count/ITEMS_PER_PAGE)
   });
 };
 
@@ -31,12 +44,22 @@ export const getProduct: RequestHandler = async (req, res, next) => {
 };
 
 export const getIndex: RequestHandler = async (req, res, next) => {
-  const products = await Product.find();
+  const count = await Product.find().countDocuments();
+
+  const page = parseInt(req.query.page?.toString() || '1');
+  const products = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
 
   res.render('shop/index', {
     prods: products,
     pageTitle: 'Shop',
     path: '/',
+    totalProducts: count,
+    currentPage: page,
+    hasNextPage: ITEMS_PER_PAGE * page < count,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    previousPage: page - 1,
+    lastPage: Math.ceil(count/ITEMS_PER_PAGE)
   });
 };
 
