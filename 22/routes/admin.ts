@@ -30,6 +30,6 @@ router.post('/edit-product', [
   ], isAuth, adminController.postEditProduct
 );
 
-router.post('/delete-product', isAuth, adminController.postDeleteProduct);
+router.delete('/delete-product', isAuth, adminController.deleteProduct);
 
 export default router;

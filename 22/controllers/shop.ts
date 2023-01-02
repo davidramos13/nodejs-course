@@ -1,16 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { HydratedDocument } from 'mongoose';
 import { RequestHandler } from 'express';
 import PDFDocument from 'pdfkit';
+import Stripe from 'stripe';
 
 import Product, { IProduct, ProductWithDoc } from '../models/Product';
-// import Cart from '../models/cart';
 import Order from '../models/Order';
 import { Cart } from '../models/User';
-import { totalmem } from 'os';
 
 const ITEMS_PER_PAGE = 2;
+const stripe = new Stripe('sk_test***REMOVED***', { apiVersion: null });
 
 export const getProducts: RequestHandler = async (req, res, next) => {
   const count = await Product.find().countDocuments();
@@ -150,4 +149,58 @@ export const getInvoice: RequestHandler = async (req, res, next) => {
   // const file = fs.createReadStream(invoicePath);
 
   // file.pipe(res);
+};
+
+export const getCheckout: RequestHandler = async (req, res, next) => {
+  const user = await req.user.populate<{ cart: Cart<ProductWithDoc> }>('cart.items.productId');
+  const products = user.cart.items;
+
+  let total = 0;
+  products.forEach(p => {
+    total += p.quantity * p.productId.price;
+  });
+
+  const host = req.get('host');
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    payment_method_types: ['card'],
+    line_items: products.map(p => ({
+      quantity: p.quantity,
+      price_data: {
+        unit_amount: Math.ceil(p.productId.price * 100),
+        product_data: {
+          name: p.productId.title,
+          description: p.productId.description,
+          images: [p.productId.imageUrl]
+        },
+        currency: 'usd'
+      }
+    })),
+    success_url: `${req.protocol}://${host}/checkout/success`, // => http://localhost:3000
+    cancel_url: `${req.protocol}://${host}/checkout/cancel`
+  });
+
+  res.render('shop/checkout', {
+    path: '/checkout',
+    pageTitle: 'Checkout',
+    products: products,
+    totalSum: total,
+    sessionId: session.id
+  });
+};
+
+export const getCheckoutSuccess: RequestHandler = async (req, res, next) => {
+  const user = await req.user.populate<{ cart: Cart<ProductWithDoc> }>('cart.items.productId');
+  const products = user.cart.items.map(i => {
+    return { quantity: i.quantity, product: { ...i.productId._doc } };
+  });
+
+  const order = new Order({
+    user: { email: req.user.email, userId: req.user },
+    products: products
+  });
+  await order.save();
+  await req.user.clearCart();
+  res.redirect('/orders');
 };

@@ -119,16 +119,16 @@ export const getProducts: RequestHandler = async (req, res, next) => {
   });
 };
 
-export const postDeleteProduct: RequestHandler = async (req, res, next) => {
+export const deleteProduct: RequestHandler = async (req, res, next) => {
   const prodId = req.body.productId;
   const product = await Product.findById(prodId);
 
   if (!product) {
-    return res.redirect('/');
+    return next(new Error('Product not found.'));
   }
 
   fs.promises.unlink(product.imageUrl);
   await product.delete();
 
-  res.redirect('/admin/products');
+  res.status(200).json({ message: 'Success!' });
 };
