@@ -1,4 +1,8 @@
 import React, { Fragment, PropsWithChildren, ReactElement } from 'react';
+import tw from 'twin.macro';
+
+const HeaderMain = tw.header`fixed left-0 top-0 w-full`;
+const MainContent = tw.main`p-4 mt-14 md:py-4 md:px-8`;
 
 type Props = { header: ReactElement; mobileNav: ReactElement; };
 const Layout: React.FC<PropsWithChildren<Props>> = props => {
@@ -6,9 +10,9 @@ const Layout: React.FC<PropsWithChildren<Props>> = props => {
 
   return (
     <Fragment>
-      <header className="main-header">{header}</header>
+      <HeaderMain>{header}</HeaderMain>
       {mobileNav}
-      <main className="content">{children}</main>
+      <MainContent>{children}</MainContent>
     </Fragment>
   );
 };

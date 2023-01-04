@@ -1,5 +1,5 @@
 import React, { FormEvent } from 'react';
-import Button from '../../components/Button';
+import Button from '../../components/Button/Button';
 import Input from '../../components/Form/Input';
 import Auth from './Auth';
 

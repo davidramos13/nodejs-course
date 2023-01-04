@@ -1,16 +1,27 @@
-import React, { Fragment } from 'react';
-import Button from '../../components/Button';
+import React, { Fragment, useState } from 'react';
+import tw, { css, styled } from 'twin.macro';
+import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
 import Input from '../../components/Form/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
 
+const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
+const CssForm = styled.form(() => [
+  tw`flex items-center`,
+  css`& * {${tw`my-0 mx-2`}}`
+]);
+
 // old state
 // isEditing: false, posts: [], totalPosts: 0, editPost: null,
 // status: '', postPage: 1, postsLoading: true, editLoading: false
 
 const Feed: React.FC = () => {
+//#region TEMP COMMENTS
+  // temp states for now
+  const [status, setStatus] = useState('');
+
   // fetch posts on mount
 
   const statusUpdate = () => {
@@ -32,8 +43,8 @@ const Feed: React.FC = () => {
     // call create/update, update post list
   };
 
-  const onChange = () => {
-    // this.setState({ error: null });
+  const onChange = (inputId: string, value: string) => {
+    setStatus(value);
   };
 
   const deletePostHandler = () => {
@@ -55,7 +66,7 @@ const Feed: React.FC = () => {
   const loadPosts = (direction?: string) => () => {
     // TODO
   };
-
+//#endregion
   return (
     <Fragment>
       <ErrorHandler error={null/* this.state.error */} onHandle={errorHandler} />
@@ -66,32 +77,33 @@ const Feed: React.FC = () => {
         // onCancelEdit={cancelEdit}
         // onFinishEdit={finishEdit}
       />
-      <section className="feed__status">
-        <form onSubmit={statusUpdate}>
+      <SecStatus>
+        <CssForm onSubmit={statusUpdate}>
           <Input
+            tw="my-0 mx-2"
             id="status"
             placeholder="Your status"
             onChange={onChange}
-            value={""/* this.state.status */}
+            value={status}
           />
-          <Button mode="flat" type="submit">
+          <Button mode="flat" type="submit" tw="my-0 mx-2">
             Update
           </Button>
-        </form>
-      </section>
-      <section className="feed__control">
+        </CssForm>
+      </SecStatus>
+      <section tw="text-center">
         <Button mode="raised" design="accent" onClick={newPostHandler}>
           New Post
         </Button>
       </section>
-      <section className="feed">
+      <section>
         {/* this.state.postsLoading */ false && (
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <div tw="text-center mt-8">
             <Loader />
           </div>
         )}
         {/* this.state.posts.length <= 0 && !this.state.postsLoading */ false ? (
-          <p style={{ textAlign: 'center' }}>No posts found.</p>
+          <p tw="text-center">No posts found.</p>
         ) : null}
         {/* !this.state.postsLoading */ true && (
           <Paginator

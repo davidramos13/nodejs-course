@@ -1,4 +1,5 @@
 import React from 'react';
+import { DivInput, LblInput, TxtArea, TxtInput } from './sharedStyles';
 
 type Props = { id: string; label?: string; value: string; multiline?: boolean;
   type?: string; placeholder?:string; rows?: number;
@@ -8,14 +9,14 @@ const Input: React.FC<Props> = props => {
     placeholder, rows, onChange } = props;
 
   const control = multiline ? (
-    <textarea
+    <TxtArea
       id={id}
       rows={rows}
       value={value}
       onChange={e => onChange(id, e.target.value)}
     />
   ) : (
-    <input
+    <TxtInput
       type={type}
       id={id}
       value={value}
@@ -25,10 +26,10 @@ const Input: React.FC<Props> = props => {
   )
 
   return (
-    <div className="input">
-      {label && <label htmlFor={id}>{label}</label>}
+    <DivInput>
+      {label && <LblInput htmlFor={id}>{label}</LblInput>}
       {control}
-    </div>
+    </DivInput>
   );
 };
 

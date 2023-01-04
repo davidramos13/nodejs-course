@@ -1,5 +1,13 @@
 import React from 'react';
-import Button from '../Button';
+import tw from 'twin.macro';
+import Button from '../Button/Button';
+
+const ArticlePost = tw.article`my-4 mx-0 border-$violet rounded-md p-2
+  md:p-4 md:w-[40rem] md:mx-auto`;
+const H3Meta = tw.h3`text-base text-gray-600 m-0`;
+const H1Title = tw.h1`text-2xl my-4 mx-0 text-$violet`;
+const DivImage = tw.div`h-60 w-full`;
+const DivActions = tw.div`text-right`;
 
 type Props = { id: string; author: string; date: string;
   title: string; onStartEdit(): void; onDelete(): void };
@@ -9,18 +17,18 @@ const Post: React.FC<Props> = props => {
   const onView = () => {};
 
   return (
-    <article className="post">
-      <header className="post__header">
-        <h3 className="post__meta">
+    <ArticlePost>
+      <header>
+        <H3Meta>
           Posted by {author} on {date}
-        </h3>
-        <h1 className="post__title">{title}</h1>
+        </H3Meta>
+        <H1Title>{title}</H1Title>
       </header>
-      {/* <div className="post__image">
+      {/* <DivImage>
         <Image imageUrl={image} contain />
-      </div>
+      </DivImage>
       <div className="post__content">{content}</div> */}
-      <div className="post__actions">
+      <DivActions>
         <Button mode="flat" link={id} onClick={onView}>
           View
         </Button>
@@ -30,8 +38,8 @@ const Post: React.FC<Props> = props => {
         <Button mode="flat" design="danger" onClick={onDelete}>
           Delete
         </Button>
-      </div>
-    </article>
+      </DivActions>
+    </ArticlePost>
   );
 };
 

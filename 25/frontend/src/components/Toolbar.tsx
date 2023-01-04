@@ -1,9 +1,12 @@
 import React, { PropsWithChildren } from 'react';
+import tw from 'twin.macro';
+
+const DivToolbar = tw.div`w-full h-14 bg-$violet`;
 
 const Toolbar: React.FC<PropsWithChildren> = ({ children }) => (
-  <div className="toolbar">
+  <DivToolbar>
       {children}
-  </div>
+  </DivToolbar>
 );
 
 export default Toolbar;

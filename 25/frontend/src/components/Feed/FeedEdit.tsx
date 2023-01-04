@@ -1,8 +1,11 @@
 import React, { Fragment } from 'react';
+import tw from 'twin.macro';
 import Backdrop from '../Backdrop';
 import FilePicker from '../Form/FilePicker';
 import Input from '../Form/Input';
 import Modal from '../Modal';
+
+const DivPreview = tw.div`w-60 h-28`;
 
 type Props = { editing: boolean; loading: boolean; }
 const FeedEdit: React.FC<Props> = props => {
@@ -46,12 +49,12 @@ const FeedEdit: React.FC<Props> = props => {
             // valid={this.state.postForm['image'].valid}
             // touched={this.state.postForm['image'].touched}
           />
-          <div className="new-post__preview-image">
+          <DivPreview>
             {/* {!this.state.imagePreview && <p>Please choose an image.</p>}
             {this.state.imagePreview && (
               <Image imageUrl={this.state.imagePreview} contain left />
             )} */}
-          </div>
+          </DivPreview>
           <Input
             id="content"
             label="Content"

@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
+import AppRoutes from './AppRoutes ';
 import Backdrop from './components/Backdrop';
 import ErrorHandler from './components/ErrorHandler';
 import Layout from './components/Layout';
@@ -167,6 +168,7 @@ const App: React.FC = () => {
           />
         }
       />
+      {<AppRoutes isAuth={isAuth} />}
     </Fragment>
   );
 };

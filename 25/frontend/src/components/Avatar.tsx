@@ -1,25 +1,16 @@
 import React from 'react';
+import tw from 'twin.macro';
+import Image from './Image';
 
-type ImageProps = { imageUrl: string; contain?: boolean }
-const Image: React.FC<ImageProps> = ({ imageUrl, contain = false }) => (
-  <div
-    className="image"
-    style={{
-      backgroundImage: `url('${imageUrl}')`,
-      backgroundSize: contain ? 'contain' : 'cover',
-      backgroundPosition: 'center'
-    }}
-  />
-);
+const DivAvatar = tw.div`w-40 h-40 my-2 mx-auto rounded-full overflow-hidden`;
 
 type Props = { image: string; size: number; height: number };
 const Avatar: React.FC<Props> = ({ image, size, height }) => (
-  <div
-    className="avatar"
-    style={{ width: size + 'rem', height: size + 'rem' }}
+  <DivAvatar
+    style={{ width: size + 'rem', height: height + 'rem' }}
   >
     <Image imageUrl={image} />
-  </div>
+  </DivAvatar>
 );
 
 export default Avatar;

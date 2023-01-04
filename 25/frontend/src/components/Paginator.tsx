@@ -1,4 +1,9 @@
 import React, { PropsWithChildren } from 'react';
+import tw from 'twin.macro';
+
+const DivControls = tw.div`flex justify-center`;
+const BtnControl = tw.button`w-20 py-1 px-0 my-0 mx-4 border-$violet
+  bg-transparent cursor-pointer text-base text-$violet`;
 
 type Props = { currentPage: number; lastPage: number;
   onPrevious(): void; onNext(): void };
@@ -6,20 +11,20 @@ const Paginator: React.FC<PropsWithChildren<Props>> = props => {
   const { children, currentPage, lastPage, onPrevious, onNext } = props;
 
   return (
-    <div className="paginator">
+    <div>
       {children}
-      <div className="paginator__controls">
+      <DivControls>
         {currentPage > 1 && (
-          <button className="paginator__control" onClick={onPrevious}>
+          <BtnControl onClick={onPrevious}>
             Previous
-          </button>
+          </BtnControl>
         )}
         {currentPage < lastPage && (
-          <button className="paginator__control" onClick={onNext}>
+          <BtnControl onClick={onNext}>
             Next
-          </button>
+          </BtnControl>
         )}
-      </div>
+      </DivControls>
     </div>
   );
 };

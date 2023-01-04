@@ -7,7 +7,7 @@ import SinglePost from './pages/Feed/SinglePost';
 
 type Props = { isAuth: boolean; };
 const AppRoutes : React.FC<Props> = ({ isAuth }) => {
-  if (isAuth) {
+  if (!isAuth) {
     return (
       <Routes>
         <Route path="/" element={<Login />} />
