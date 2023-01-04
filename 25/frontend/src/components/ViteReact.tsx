@@ -4,7 +4,7 @@ import reactLogo from '../assets/react.svg';
 
 const DivContainer = tw.div`fixed right-0 bottom-0`;
 const ALogo = tw.a`inline-block`;
-const ImgLogo = tw.img`h-32 p-4 will-change-auto hover:drop-shadow-blue`;
+const ImgLogo = tw.img`h-24 p-2 will-change-auto hover:drop-shadow-blue`;
 
 const ReactLogo = tw(ImgLogo)`animate-spin-slow`;
 

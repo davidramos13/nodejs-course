@@ -97,7 +97,7 @@ const Feed: React.FC = () => {
         </Button>
       </section>
       <section>
-        {/* this.state.postsLoading */ false && (
+        {/* this.state.postsLoading */ true && (
           <div tw="text-center mt-8">
             <Loader />
           </div>
@@ -109,7 +109,7 @@ const Feed: React.FC = () => {
           <Paginator
             onPrevious={loadPosts('previous')}
             onNext={loadPosts('next')}
-            lastPage={Math.ceil(/* this.state.totalPosts */4 / 2)}
+            lastPage={1/* this.state.totalPosts */}
             currentPage={1/* this.state.postPage */}
           >
             {/* {this.state.posts.map(post => (

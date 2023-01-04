@@ -8,6 +8,9 @@ const customStyles = css({
     WebkitTapHighlightColor: theme`colors.purple.500`,
     ...tw`antialiased`,
   },
+  h1: {
+    fontWeight: 'bold',
+  }
 });
 
 const GlobalStyles = () => (
