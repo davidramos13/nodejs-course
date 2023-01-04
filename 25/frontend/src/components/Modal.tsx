@@ -12,6 +12,8 @@ const DivContent = tw.div`p-4`;
 const DivActions = tw.div`p-4 text-right`;
 const CssButton = tw(Button)`my-0 mx-2`;
 
+const modalElement = document.getElementById('modal-root') as HTMLElement;
+
 type Props = {
   title: string;
   onCancelModal(): void;
@@ -48,7 +50,7 @@ const Modal: React.FC<PropsWithChildren<Props>> = (props) => {
         </CssButton>
       </DivActions>
     </DivModal>,
-    document.getElementById('modal-root')!,
+    modalElement,
   );
 };
 

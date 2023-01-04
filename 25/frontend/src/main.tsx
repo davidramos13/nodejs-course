@@ -3,14 +3,18 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import GlobalStyles from './styles/GlobalStyles';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const container = document.getElementById('root') as HTMLElement;
-const root = createRoot(container!);
+const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <GlobalStyles />
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
 );
