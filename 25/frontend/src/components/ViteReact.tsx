@@ -9,7 +9,6 @@ const ImgLogo = tw.img`h-24 p-2 will-change-auto hover:drop-shadow-blue`;
 const ReactLogo = tw(ImgLogo)`animate-spin-slow`;
 
 const ViteReact: React.FC = () => {
-
   return (
     <DivContainer>
       <ALogo href="https://vitejs.dev" target="_blank">

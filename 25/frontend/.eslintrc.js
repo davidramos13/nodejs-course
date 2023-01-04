@@ -1,10 +1,22 @@
+/* eslint-env node */
 module.exports = {
-  plugins: ['react', '@typescript-eslint', 'import', 'jsx-a11y', 'react-hooks', 'prettier', 'simple-import-sort'],
+  env: {
+    browser: true,
+    es2022: true,
+  },
+  plugins: [
+    'react',
+    '@typescript-eslint',
+    'import',
+    'jsx-a11y',
+    'react-hooks',
+    'prettier',
+    'simple-import-sort',
+  ],
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:react/jsx-runtime',
     'plugin:prettier/recommended',
@@ -38,5 +50,19 @@ module.exports = {
         singleQuote: true,
       },
     ],
+  },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      parserOptions: {
+        project: ['./tsconfig.json'],
+      },
+    },
+  ],
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

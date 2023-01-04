@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from "react";
-import { CssButton, CssButtonProps, CssLink } from "./Button.styled";
+import React, { PropsWithChildren } from 'react';
+import { CssButton, CssButtonProps, CssLink } from './Button.styled';
 
 type Props = CssButtonProps & {
   link?: string;
@@ -8,9 +8,17 @@ type Props = CssButtonProps & {
   disabled?: boolean;
   loading?: boolean;
 };
-const Button: React.FC<PropsWithChildren<Props>> = props => {
-  const { link, design, mode, children, onClick, loading = false,
-    disabled = false, type = 'button' } = props;
+const Button: React.FC<PropsWithChildren<Props>> = (props) => {
+  const {
+    link,
+    design,
+    mode,
+    children,
+    onClick,
+    loading = false,
+    disabled = false,
+    type = 'button',
+  } = props;
 
   if (link) {
     return (
@@ -21,12 +29,12 @@ const Button: React.FC<PropsWithChildren<Props>> = props => {
   }
 
   return (
-    <CssButton design={design}
+    <CssButton
+      design={design}
       mode={mode}
       onClick={onClick}
       disabled={disabled || loading}
-      type={type}
-    >
+      type={type}>
       {loading ? 'Loading...' : children}
     </CssButton>
   );

@@ -10,7 +10,11 @@ import Paginator from '../../components/Paginator';
 const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
 const CssForm = styled.form(() => [
   tw`flex items-center`,
-  css`& * {${tw`my-0 mx-2`}}`
+  css`
+    & * {
+      ${tw`my-0 mx-2`}
+    }
+  `,
 ]);
 
 // old state
@@ -18,7 +22,7 @@ const CssForm = styled.form(() => [
 // status: '', postPage: 1, postsLoading: true, editLoading: false
 
 const Feed: React.FC = () => {
-//#region TEMP COMMENTS
+  //#region TEMP COMMENTS
   // temp states for now
   const [status, setStatus] = useState('');
 
@@ -66,14 +70,14 @@ const Feed: React.FC = () => {
   const loadPosts = (direction?: string) => () => {
     // TODO
   };
-//#endregion
+  //#endregion
   return (
     <Fragment>
-      <ErrorHandler error={null/* this.state.error */} onHandle={errorHandler} />
+      <ErrorHandler error={null /* this.state.error */} onHandle={errorHandler} />
       <FeedEdit
-        editing={false/* this.state.isEditing */}
+        editing={false /* this.state.isEditing */}
         // selectedPost={this.state.editPost}
-        loading={false/* this.state.editLoading */}
+        loading={false /* this.state.editLoading */}
         // onCancelEdit={cancelEdit}
         // onFinishEdit={finishEdit}
       />
@@ -97,22 +101,26 @@ const Feed: React.FC = () => {
         </Button>
       </section>
       <section>
-        {/* this.state.postsLoading */ true && (
-          <div tw="text-center mt-8">
-            <Loader />
-          </div>
-        )}
-        {/* this.state.posts.length <= 0 && !this.state.postsLoading */ false ? (
-          <p tw="text-center">No posts found.</p>
-        ) : null}
-        {/* !this.state.postsLoading */ true && (
-          <Paginator
-            onPrevious={loadPosts('previous')}
-            onNext={loadPosts('next')}
-            lastPage={1/* this.state.totalPosts */}
-            currentPage={1/* this.state.postPage */}
-          >
-            {/* {this.state.posts.map(post => (
+        {
+          /* this.state.postsLoading */ true && (
+            <div tw="text-center mt-8">
+              <Loader />
+            </div>
+          )
+        }
+        {
+          /* this.state.posts.length <= 0 && !this.state.postsLoading */ true && (
+            <p tw="text-center">No posts found.</p>
+          )
+        }
+        {
+          /* !this.state.postsLoading */ true && (
+            <Paginator
+              onPrevious={loadPosts('previous')}
+              onNext={loadPosts('next')}
+              lastPage={1 /* this.state.totalPosts */}
+              currentPage={1 /* this.state.postPage */}>
+              {/* {this.state.posts.map(post => (
               <Post
                 key={post._id}
                 id={post._id}
@@ -125,8 +133,9 @@ const Feed: React.FC = () => {
                 onDelete={this.deletePostHandler.bind(this, post._id)}
               />
             ))} */}
-          </Paginator>
-        )}
+            </Paginator>
+          )
+        }
       </section>
     </Fragment>
   );

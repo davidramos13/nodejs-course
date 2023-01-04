@@ -11,8 +11,7 @@ const ErrorHandler: React.FC<Props> = ({ error, onHandle }) => (
         title="An Error Occurred"
         onCancelModal={onHandle}
         onAcceptModal={onHandle}
-        acceptEnabled
-      >
+        acceptEnabled>
         <p>{error.message}</p>
       </Modal>
     )}

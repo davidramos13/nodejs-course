@@ -1,4 +1,4 @@
-import tw from "twin.macro";
+import tw from 'twin.macro';
 
 export const DivInput = tw.div`my-4 w-full`;
 export const LblInput = tw.label`block uppercase mb-1`;

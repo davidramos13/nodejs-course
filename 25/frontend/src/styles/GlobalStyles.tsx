@@ -10,7 +10,7 @@ const customStyles = css({
   },
   h1: {
     fontWeight: 'bold',
-  }
+  },
 });
 
 const GlobalStyles = () => (

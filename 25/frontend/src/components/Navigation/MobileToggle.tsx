@@ -6,7 +6,7 @@ const BtnToggle = tw.div`flex flex-col border-none w-10 h-[80%]
 
 const SpanBar = tw.span`h-1 w-10 bg-white`;
 
-type Props = { onOpen(): void; };
+type Props = { onOpen(): void };
 const MobileToggle: React.FC<Props> = ({ onOpen }) => (
   <BtnToggle onClick={onOpen}>
     <SpanBar />

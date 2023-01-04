@@ -12,7 +12,7 @@ const Signup: React.FC = () => {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     // onSignup(e, { }); // sending this.state
-  }
+  };
 
   const onChange = () => {
     // TODO

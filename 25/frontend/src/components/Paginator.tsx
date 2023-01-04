@@ -5,25 +5,16 @@ const DivControls = tw.div`flex justify-center`;
 const BtnControl = tw.button`w-20 py-1 px-0 my-0 mx-4 border border-$violet
   bg-transparent cursor-pointer text-base text-$violet`;
 
-type Props = { currentPage: number; lastPage: number;
-  onPrevious(): void; onNext(): void };
-const Paginator: React.FC<PropsWithChildren<Props>> = props => {
+type Props = { currentPage: number; lastPage: number; onPrevious(): void; onNext(): void };
+const Paginator: React.FC<PropsWithChildren<Props>> = (props) => {
   const { children, currentPage, lastPage, onPrevious, onNext } = props;
 
   return (
     <div>
       {children}
       <DivControls>
-        {currentPage > 1 && (
-          <BtnControl onClick={onPrevious}>
-            Previous
-          </BtnControl>
-        )}
-        {currentPage < lastPage && (
-          <BtnControl onClick={onNext}>
-            Next
-          </BtnControl>
-        )}
+        {currentPage > 1 && <BtnControl onClick={onPrevious}>Previous</BtnControl>}
+        {currentPage < lastPage && <BtnControl onClick={onNext}>Next</BtnControl>}
       </DivControls>
     </div>
   );

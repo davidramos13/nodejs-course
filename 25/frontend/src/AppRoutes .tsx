@@ -5,8 +5,8 @@ import Signup from './pages/Auth/Signup';
 import Feed from './pages/Feed/Feed';
 import SinglePost from './pages/Feed/SinglePost';
 
-type Props = { isAuth: boolean; };
-const AppRoutes : React.FC<Props> = ({ isAuth }) => {
+type Props = { isAuth: boolean };
+const AppRoutes: React.FC<Props> = ({ isAuth }) => {
   if (!isAuth) {
     return (
       <Routes>
@@ -14,7 +14,7 @@ const AppRoutes : React.FC<Props> = ({ isAuth }) => {
         <Route path="/signup" element={<Signup />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    )
+    );
   }
 
   return (
@@ -26,4 +26,4 @@ const AppRoutes : React.FC<Props> = ({ isAuth }) => {
   );
 };
 
-export default AppRoutes ;
+export default AppRoutes;

@@ -9,9 +9,8 @@ type Props = { open?: boolean; onClick(): void };
 const Backdrop: React.FC<Props> = ({ open = false, onClick }) => {
   return ReactDOM.createPortal(
     <DivBackdrop onClick={onClick} />,
-    document.getElementById('backdrop-root')!
+    document.getElementById('backdrop-root')!,
   );
 };
-
 
 export default Backdrop;

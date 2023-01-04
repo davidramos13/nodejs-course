@@ -19,11 +19,9 @@ const SinglePost: React.FC = () => {
   return (
     <SecContainer>
       <h1>TITLE</h1>
-      <H2Legend>
-        Created by AUTHOR on DATE
-      </H2Legend>
+      <H2Legend>Created by AUTHOR on DATE</H2Legend>
       <DivImage>
-        <Image imageUrl='IMAGEURL' contain />
+        <Image imageUrl="IMAGEURL" contain />
       </DivImage>
       <p>CONTENT</p>
     </SecContainer>

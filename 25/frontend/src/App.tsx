@@ -30,12 +30,11 @@ const App: React.FC = () => {
       return;
     }
     const userId = localStorage.getItem('userId');
-    const remainingMilliseconds =
-      new Date(expiryDate).getTime() - new Date().getTime();
+    const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
 
-      setIsAuth(true);
-      setToken(token);
-      setUserId(userId);
+    setIsAuth(true);
+    setToken(token);
+    setUserId(userId);
 
     setAutoLogout(remainingMilliseconds);
   }, []);
@@ -139,14 +138,12 @@ const App: React.FC = () => {
     //       error: err
     //     });
     //   });
-  }
+  };
 
   return (
     <Fragment>
       <ViteReact />
-      {showBackdrop && (
-        <Backdrop onClick={backdropClickHandler} />
-      )}
+      {showBackdrop && <Backdrop onClick={backdropClickHandler} />}
       <ErrorHandler error={error} onHandle={errorHandler} />
       <Layout
         header={

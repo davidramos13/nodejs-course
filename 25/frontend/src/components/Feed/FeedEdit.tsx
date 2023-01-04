@@ -6,13 +6,16 @@ import Input from '../Form/Input';
 import Modal from '../Modal';
 
 const DivPreview = tw.div`w-60 h-28`;
+const noop = () => {
+  // TEMP EMPTY FN
+};
 
-type Props = { editing: boolean; loading: boolean; }
-const FeedEdit: React.FC<Props> = props => {
+type Props = { editing: boolean; loading: boolean };
+const FeedEdit: React.FC<Props> = (props) => {
   const { editing, loading } = props;
 
-  const acceptPostChangeHandler = () => {};
-  const cancelPostChangeHandler = () => {};
+  const acceptPostChangeHandler = noop;
+  const cancelPostChangeHandler = noop;
 
   const postInputChangeHandler = () => {
     // TODO
@@ -28,8 +31,7 @@ const FeedEdit: React.FC<Props> = props => {
         // acceptEnabled={this.state.formIsValid}
         onCancelModal={cancelPostChangeHandler}
         onAcceptModal={acceptPostChangeHandler}
-        isLoading={loading}
-      >
+        isLoading={loading}>
         <form>
           <Input
             id="title"

@@ -12,11 +12,22 @@ const DivContent = tw.div`p-4`;
 const DivActions = tw.div`p-4 text-right`;
 const CssButton = tw(Button)`my-0 mx-2`;
 
-type Props = { title: string; onCancelModal(): void; onAcceptModal(): void;
-  acceptEnabled?: boolean; isLoading?: boolean };
-const Modal: React.FC<PropsWithChildren<Props>> = props => {
-  const { children, title, onAcceptModal, onCancelModal,
-    acceptEnabled = false, isLoading = false } = props;
+type Props = {
+  title: string;
+  onCancelModal(): void;
+  onAcceptModal(): void;
+  acceptEnabled?: boolean;
+  isLoading?: boolean;
+};
+const Modal: React.FC<PropsWithChildren<Props>> = (props) => {
+  const {
+    children,
+    title,
+    onAcceptModal,
+    onCancelModal,
+    acceptEnabled = false,
+    isLoading = false,
+  } = props;
 
   return ReactDOM.createPortal(
     <DivModal>
@@ -32,14 +43,13 @@ const Modal: React.FC<PropsWithChildren<Props>> = props => {
           mode="raised"
           onClick={onAcceptModal}
           disabled={!acceptEnabled}
-          loading={isLoading}
-        >
+          loading={isLoading}>
           Accept
         </CssButton>
       </DivActions>
     </DivModal>,
-    document.getElementById('modal-root')!
-  );;
+    document.getElementById('modal-root')!,
+  );
 };
 
 export default Modal;
