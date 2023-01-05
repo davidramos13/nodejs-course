@@ -5,7 +5,7 @@ import Button from './Button/Button';
 
 const DivModal = tw.div`fixed w-[90%] left-[5%] top-[20vh]
   bg-white rounded-md z-20 shadow-y2
-  md:w-[40rem] md:left-[calc(100%-40rem)/2]`;
+  md:w-[40rem] md:left-[calc((100%-40rem)/2)]`;
 const Header = tw.header`border-b-2 border-b-$violet`;
 const H1Header = tw.h1`text-2xl text-$violet m-4`;
 const DivContent = tw.div`p-4`;

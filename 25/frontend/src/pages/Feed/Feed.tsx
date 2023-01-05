@@ -1,13 +1,15 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import tw from 'twin.macro';
 import * as yup from 'yup';
 import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
+import Post from '../../components/Feed/Post';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
+import { useGetPostsQuery } from '../../store/feed/apis';
 import useFormHook from '../../util/useFormHook';
 
 const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
@@ -21,6 +23,14 @@ const defaultValues: FeedData = { status: '' };
 
 const Feed: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
+  const { data, error, isLoading } = useGetPostsQuery();
+  const [page, setPage] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const currentdate = new Date();
+  console.log(currentdate, 'loading?', isLoading);
+  console.log(currentdate, 'data?', data);
+
   //#region TEMP COMMENTS
 
   // fetch posts on mount
@@ -29,7 +39,7 @@ const Feed: React.FC = () => {
     // call update status
   };
 
-  const startEdit = () => {
+  const startEdit = (_id: string) => () => {
     // this.setState(prevState => {
     //   const loadedPost = { ...prevState.posts.find(p => p._id === postId) };
     //   return { isEditing: true, editPost: loadedPost };
@@ -44,16 +54,12 @@ const Feed: React.FC = () => {
     // call create/update, update post list
   };
 
-  const deletePostHandler = () => {
+  const deletePost = (_id: string) => () => {
     // call delete, update posts in page
   };
 
   const newPostHandler = () => {
     // this.setState({ isEditing: true });
-  };
-
-  const errorHandler = () => {
-    // this.setState({ error: null });
   };
 
   const catchError = () => {
@@ -66,9 +72,9 @@ const Feed: React.FC = () => {
   //#endregion
   return (
     <Fragment>
-      <ErrorHandler error={null /* this.state.error */} onHandle={errorHandler} />
+      <ErrorHandler error={error} />
       <FeedEdit
-        editing={true /* this.state.isEditing */}
+        editing={isEditing}
         // selectedPost={this.state.editPost}
         loading={false /* this.state.editLoading */}
         // onCancelEdit={cancelEdit}
@@ -88,26 +94,19 @@ const Feed: React.FC = () => {
         </Button>
       </section>
       <section>
-        {
-          /* this.state.postsLoading */ true && (
-            <div tw="text-center mt-8">
-              <Loader />
-            </div>
-          )
-        }
-        {
-          /* this.state.posts.length <= 0 && !this.state.postsLoading */ true && (
-            <p tw="text-center">No posts found.</p>
-          )
-        }
-        {
-          /* !this.state.postsLoading */ true && (
-            <Paginator
-              onPrevious={loadPosts('previous')}
-              onNext={loadPosts('next')}
-              lastPage={1 /* this.state.totalPosts */}
-              currentPage={1 /* this.state.postPage */}>
-              {/* {this.state.posts.map(post => (
+        {isLoading ? (
+          <div tw="text-center mt-8">
+            <Loader />
+          </div>
+        ) : !data || data.posts.length === 0 ? (
+          <p tw="text-center">No posts found.</p>
+        ) : (
+          <Paginator
+            onPrevious={loadPosts('previous')}
+            onNext={loadPosts('next')}
+            lastPage={0}
+            currentPage={page}>
+            {data.posts.map((post) => (
               <Post
                 key={post._id}
                 id={post._id}
@@ -116,13 +115,12 @@ const Feed: React.FC = () => {
                 title={post.title}
                 image={post.imageUrl}
                 content={post.content}
-                onStartEdit={this.startEditPostHandler.bind(this, post._id)}
-                onDelete={this.deletePostHandler.bind(this, post._id)}
+                onStartEdit={startEdit(post._id)}
+                onDelete={deletePost(post._id)}
               />
-            ))} */}
-            </Paginator>
-          )
-        }
+            ))}
+          </Paginator>
+        )}
       </section>
     </Fragment>
   );

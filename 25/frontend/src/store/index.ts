@@ -1,9 +1,15 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { postsApi } from './feed/apis';
 
-const tempSlice = createSlice({ name: 'temp', initialState: '', reducers: {} });
+const rootReducer = combineReducers({
+  [postsApi.reducerPath]: postsApi.reducer,
+});
 
-const store = configureStore({ reducer: { temp: tempSlice.reducer } });
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (gdm) => gdm().concat(postsApi.middleware),
+});
 
 type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

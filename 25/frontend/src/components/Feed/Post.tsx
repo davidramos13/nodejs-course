@@ -18,6 +18,8 @@ type Props = {
   author: string;
   date: string;
   title: string;
+  image: string;
+  content: string;
   onStartEdit(): void;
   onDelete(): void;
 };
