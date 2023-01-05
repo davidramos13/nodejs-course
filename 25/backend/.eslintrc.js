@@ -1,30 +1,17 @@
-/* eslint-env node */
 module.exports = {
   env: {
-    browser: true,
+    node: true,
     es2022: true,
   },
-  plugins: [
-    'react',
-    '@typescript-eslint',
-    'import',
-    'jsx-a11y',
-    'react-hooks',
-    'prettier',
-    'simple-import-sort',
-  ],
+  plugins: ['@typescript-eslint', 'import', 'prettier', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:jsx-a11y/recommended',
     'plugin:import/typescript',
-    'plugin:react/jsx-runtime',
     'plugin:prettier/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaFeatures: { jsx: true },
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
@@ -39,9 +26,6 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       },
     ],
-    'react/no-unknown-property': [2, { ignore: ['tw'] }],
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
     'prettier/prettier': [
       'warn',
       {
@@ -52,16 +36,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['*.ts'],
       extends: ['plugin:@typescript-eslint/recommended'],
       parserOptions: {
         project: ['./tsconfig.json'],
       },
     },
   ],
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
 };
