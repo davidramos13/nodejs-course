@@ -1,52 +1,53 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
+import { FieldValues, SubmitHandler } from 'react-hook-form';
+import * as yup from 'yup';
 import Button from '../../components/Button/Button';
-import Input from '../../components/Form/Input';
+import Form from '../../components/Form/Form';
+import Input from '../../components/Input';
+import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
 
-// type Props = {
-//   loading: boolean;
-//   onLogin(e: FormEvent<HTMLFormElement>, options: { email: string; password: string }): void;
-// }
-const Login: React.FC = () => {
-  // const { loading, onLogin } = props;
+const schema = yup
+  .object({
+    email: yup.string().required().email(),
+    password: yup.string().required().min(5),
+  })
+  .required();
 
-  const onChange = () => {
+type LoginData = { email: string; password: string };
+const defaultValues: LoginData = { email: '', password: '' };
+
+const Login: React.FC = () => {
+  const formHook = useFormHook(schema, defaultValues);
+
+  const _onChange = () => {
     // TODO
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    console.log(data);
     // onLogin(e, { email: "TODO", password: "TODO" });
   };
 
   return (
     <Auth>
-      <form onSubmit={onSubmit}>
-        <Input
-          id="email"
-          label="Your E-Mail"
-          type="email"
-          onChange={onChange}
-          // onBlur={this.inputBlurHandler.bind(this, 'email')}
-          value="" // {this.state.loginForm['email'].value}
-          // valid={this.state.loginForm['email'].valid}
-          // touched={this.state.loginForm['email'].touched}
-        />
-        <Input
-          id="password"
-          label="Password"
-          type="password"
-          onChange={onChange}
-          // onBlur={this.inputBlurHandler.bind(this, 'password')}
-          value="" // {this.state.loginForm['password'].value}
-          // valid={this.state.loginForm['password'].valid}
-          // touched={this.state.loginForm['password'].touched}
-        />
+      <Form formHook={formHook} onSubmit={onSubmit}>
+        <Input label="Your E-Mail" type="email" name="email" />
+        <Input label="Password" type="password" name="password" />
         <Button mode="raised" type="submit" /* loading={loading} */>
           Login
         </Button>
-      </form>
+      </Form>
     </Auth>
   );
 };
 
 export default Login;
+
+// onBlur={this.inputBlurHandler.bind(this, 'email')}
+// valid={this.state.loginForm['email'].valid}
+// touched={this.state.loginForm['email'].touched}
+
+// onBlur={this.inputBlurHandler.bind(this, 'password')}
+// valid={this.state.loginForm['password'].valid}
+// touched={this.state.loginForm['password'].touched}

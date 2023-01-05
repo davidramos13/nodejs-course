@@ -1,30 +1,27 @@
-import React, { Fragment, useState } from 'react';
-import tw, { css, styled } from 'twin.macro';
+import React, { Fragment } from 'react';
+import tw from 'twin.macro';
+import * as yup from 'yup';
 import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
-import Input from '../../components/Form/Input';
+import Form from '../../components/Form/Form';
+import Input from '../../components/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
+import useFormHook from '../../util/useFormHook';
 
 const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
-const CssForm = styled.form(() => [
-  tw`flex items-center`,
-  css`
-    & * {
-      ${tw`my-0 mx-2`}
-    }
-  `,
-]);
 
+const schema = yup.object({ status: yup.string() });
+type FeedData = { status: string };
+const defaultValues: FeedData = { status: '' };
 // old state
 // isEditing: false, posts: [], totalPosts: 0, editPost: null,
 // status: '', postPage: 1, postsLoading: true, editLoading: false
 
 const Feed: React.FC = () => {
+  const formHook = useFormHook(schema, defaultValues);
   //#region TEMP COMMENTS
-  // temp states for now
-  const [status, setStatus] = useState('');
 
   // fetch posts on mount
 
@@ -45,10 +42,6 @@ const Feed: React.FC = () => {
 
   const finishEdit = () => {
     // call create/update, update post list
-  };
-
-  const onChange = (inputId: string, value: string) => {
-    setStatus(value);
   };
 
   const deletePostHandler = () => {
@@ -75,25 +68,19 @@ const Feed: React.FC = () => {
     <Fragment>
       <ErrorHandler error={null /* this.state.error */} onHandle={errorHandler} />
       <FeedEdit
-        editing={false /* this.state.isEditing */}
+        editing={true /* this.state.isEditing */}
         // selectedPost={this.state.editPost}
         loading={false /* this.state.editLoading */}
         // onCancelEdit={cancelEdit}
         // onFinishEdit={finishEdit}
       />
       <SecStatus>
-        <CssForm onSubmit={statusUpdate}>
-          <Input
-            tw="my-0 mx-2"
-            id="status"
-            placeholder="Your status"
-            onChange={onChange}
-            value={status}
-          />
-          <Button mode="flat" type="submit" tw="my-0 mx-2">
+        <Form useStyled formHook={formHook} onSubmit={statusUpdate}>
+          <Input name="status" placeholder="Your status" />
+          <Button mode="flat" type="submit">
             Update
           </Button>
-        </CssForm>
+        </Form>
       </SecStatus>
       <section tw="text-center">
         <Button mode="raised" design="accent" onClick={newPostHandler}>

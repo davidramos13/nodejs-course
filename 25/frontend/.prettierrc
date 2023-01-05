@@ -7,5 +7,6 @@
   "bracketSameLine": true,
   "useTabs": false,
   "arrowParens": "always",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "singleAttributePerLine": false
 }

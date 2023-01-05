@@ -1,7 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-const store = configureStore({ reducer: {} });
+const tempSlice = createSlice({ name: 'temp', initialState: '', reducers: {} });
+
+const store = configureStore({ reducer: { temp: tempSlice.reducer } });
 
 type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
