@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import tw from 'twin.macro';
-import * as yup from 'yup';
+import { z } from 'zod';
 import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
@@ -9,12 +9,14 @@ import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
-import { useGetPostsQuery } from '../../store/feed/apis';
+import { useCreatePostMutation, useGetPostsQuery } from '../../store/feed/apis';
+import { PostFormData } from '../../store/feed/interfaces';
+import getLastError from '../../util/getLastError';
 import useFormHook from '../../util/useFormHook';
 
 const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
 
-const schema = yup.object({ status: yup.string() });
+const schema = z.object({ status: z.string() });
 type FeedData = { status: string };
 const defaultValues: FeedData = { status: '' };
 // old state
@@ -23,13 +25,21 @@ const defaultValues: FeedData = { status: '' };
 
 const Feed: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
-  const { data, error, isLoading } = useGetPostsQuery();
+  const {
+    data,
+    error: fetchError,
+    isLoading,
+    fulfilledTimeStamp: fetchTime,
+    refetch,
+  } = useGetPostsQuery();
+  const [
+    createPost,
+    { isSuccess, error: createError, isLoading: createLoading, fulfilledTimeStamp: createTime },
+  ] = useCreatePostMutation();
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
 
-  const currentdate = new Date();
-  console.log(currentdate, 'loading?', isLoading);
-  console.log(currentdate, 'data?', data);
+  const error = getLastError([fetchError, fetchTime], [createError, createTime]);
 
   //#region TEMP COMMENTS
 
@@ -47,11 +57,14 @@ const Feed: React.FC = () => {
   };
 
   const cancelEdit = () => {
+    setIsEditing(false);
     // this.setState({ isEditing: false, editPost: null });
   };
 
-  const finishEdit = () => {
-    // call create/update, update post list
+  const finishEdit = async (data: PostFormData) => {
+    await createPost(data);
+    setIsEditing(false);
+    refetch();
   };
 
   const deletePost = (_id: string) => () => {
@@ -59,7 +72,7 @@ const Feed: React.FC = () => {
   };
 
   const newPostHandler = () => {
-    // this.setState({ isEditing: true });
+    setIsEditing(true);
   };
 
   const catchError = () => {
@@ -75,10 +88,10 @@ const Feed: React.FC = () => {
       <ErrorHandler error={error} />
       <FeedEdit
         editing={isEditing}
-        // selectedPost={this.state.editPost}
-        loading={false /* this.state.editLoading */}
-        // onCancelEdit={cancelEdit}
-        // onFinishEdit={finishEdit}
+        selectedPost={undefined} // temporal until having edit fetch ready
+        loading={createLoading}
+        onCancelEdit={cancelEdit}
+        onFinishEdit={finishEdit}
       />
       <SecStatus>
         <Form useStyled formHook={formHook} onSubmit={statusUpdate}>

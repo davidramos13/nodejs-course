@@ -1,13 +1,14 @@
 import { DefaultValues, useForm, FieldValues } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 type DefaultType<T> = DefaultValues<T> | ((payload?: unknown) => Promise<T>);
-function useFormHook<T extends FieldValues>(
-  schema: yup.AnyObjectSchema,
-  defaultValues: DefaultType<T>,
-) {
-  const hook = useForm<T>({ defaultValues, resolver: yupResolver(schema) });
+function useFormHook<T extends FieldValues>(schema: z.AnyZodObject, defaultValues: DefaultType<T>) {
+  const hook = useForm<T>({
+    defaultValues,
+    resolver: zodResolver(schema),
+    mode: 'onTouched',
+  });
   return hook;
 }
 

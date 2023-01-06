@@ -1,25 +1,23 @@
 import React from 'react';
-import * as yup from 'yup';
+import { z } from 'zod';
 import Button from '../../components/Button/Button';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
 
-const schema = yup
-  .object({
-    email: yup.string().required().email(),
-    name: yup.string().required(),
-    password: yup.string().required().min(5),
-  })
-  .required();
+const schema = z.object({
+  email: z.string().email(),
+  name: z.string(),
+  password: z.string().min(5),
+});
 
 // type Props = {
 //   loading: boolean;
 //   onSignup(e: FormEvent<HTMLFormElement>, options: any): void;
 // }
 
-type SignupData = { email: string; name: string; password: string };
+type SignupData = z.infer<typeof schema>;
 const defaultValues: SignupData = { email: '', name: '', password: '' };
 
 const Signup: React.FC = () => {

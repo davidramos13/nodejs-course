@@ -1,18 +1,16 @@
 import React from 'react';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
-import * as yup from 'yup';
+import { z } from 'zod';
 import Button from '../../components/Button/Button';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
 
-const schema = yup
-  .object({
-    email: yup.string().required().email(),
-    password: yup.string().required().min(5),
-  })
-  .required();
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(5),
+});
 
 type LoginData = { email: string; password: string };
 const defaultValues: LoginData = { email: '', password: '' };

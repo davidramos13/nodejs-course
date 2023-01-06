@@ -1,53 +1,64 @@
 import React, { Fragment } from 'react';
 import tw from 'twin.macro';
 import useFormHook from '../../util/useFormHook';
-import * as yup from 'yup';
 import Backdrop from '../Backdrop';
 import Form from '../Form/Form';
 import Input from '../Input';
 import TextArea from '../Input/TextArea';
 import Modal from '../Modal';
+import { IPost, PostFormData } from '../../store/feed/interfaces';
+import { z } from 'zod';
 
 const DivPreview = tw.div`w-60 h-28`;
-const noop = () => {
-  // TEMP EMPTY FN
+
+const schema = z.object({
+  title: z.string().min(5),
+  content: z.string().min(5),
+});
+
+const getInitialValues = (post?: IPost) => {
+  let values: PostFormData = { title: '', /* imageUrl: '', */ content: '' };
+  if (post) {
+    const { title, content } = post;
+    values = { title, content };
+  }
+  return values;
 };
 
-const schema = yup
-  .object({
-    title: yup.string().required().min(5),
-    image: yup.string().required(),
-    content: yup.string().required().min(5),
-  })
-  .required();
-
-type PostData = { title: string; image: string; content: string };
-const defaultValues: PostData = { title: '', image: '', content: '' };
-
-type Props = { editing: boolean; loading: boolean };
+type Props = {
+  editing: boolean;
+  loading: boolean;
+  selectedPost?: IPost;
+  onCancelEdit(): void;
+  onFinishEdit(data: PostFormData): void;
+};
 const FeedEdit: React.FC<Props> = (props) => {
-  const formHook = useFormHook(schema, defaultValues);
-  const { editing, loading } = props;
+  const { editing, loading, selectedPost, onCancelEdit, onFinishEdit } = props;
+  const initialValues = getInitialValues(selectedPost);
+  const formHook = useFormHook(schema, initialValues);
+  const { handleSubmit, reset } = formHook;
 
-  const acceptPostChangeHandler = noop;
-  const cancelPostChangeHandler = noop;
+  const acceptPostChangeHandler = async () => {
+    await handleSubmit((data) => {
+      reset();
+      onFinishEdit(data);
+    })();
+  };
+
+  const cancelPostChangeHandler = onCancelEdit;
 
   if (!editing) return null;
-
-  const onSubmit = (data: PostData) => {
-    console.log(data);
-  };
 
   return (
     <Fragment>
       <Backdrop onClick={cancelPostChangeHandler} />
       <Modal
         title="New Post"
-        // acceptEnabled={this.state.formIsValid}
+        acceptEnabled={formHook.formState.isValid}
         onCancelModal={cancelPostChangeHandler}
         onAcceptModal={acceptPostChangeHandler}
         isLoading={loading}>
-        <Form formHook={formHook} onSubmit={onSubmit}>
+        <Form formHook={formHook} onSubmit={onFinishEdit}>
           <Input name="title" label="Title" />
           <Input type="file" name="image" label="Image" />
           <DivPreview>
