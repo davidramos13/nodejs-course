@@ -10,6 +10,7 @@ import Modal from '../Modal';
 import { IPost, PostFormData } from '../../store/feed/interfaces';
 import { z } from 'zod';
 import { generateBase64FromImage } from '../../util/image';
+import FilePicker from '../Input/FilePicker';
 
 const DivPreview = tw.div`w-60 h-28`;
 
@@ -48,8 +49,10 @@ const FeedEdit: React.FC<Props> = (props) => {
   const { handleSubmit, reset } = formHook;
 
   const acceptPostChangeHandler = async () => {
+    // this submit is triggered manually (the base source is not using a button type=submit in the modal)
     await handleSubmit((data) => {
       reset();
+      setImageUrl(undefined);
       onFinishEdit(data);
     })();
   };
@@ -77,7 +80,7 @@ const FeedEdit: React.FC<Props> = (props) => {
         isLoading={loading}>
         <Form formHook={formHook} onSubmit={onFinishEdit}>
           <Input name="title" label="Title" />
-          <Input type="file" name="image" label="Image" onFileChange={onFileChange} />
+          <FilePicker name="image" label="Image" onFileChange={onFileChange} />
           <DivPreview>
             {!imageUrl && <p>Please choose an image.</p>}
             {imageUrl && <Image imageUrl={imageUrl} contain left />}

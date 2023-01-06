@@ -10,7 +10,18 @@ export const postsApi = createApi({
     getPost: builder.query<IPost, string | undefined>({ query: (id) => `posts/${id}` }),
     getPosts: builder.query<GetPosts, void>({ query: () => 'posts' }),
     createPost: builder.mutation<void, PostFormData>({
-      query: (body) => ({ url: 'post', method: 'POST', body }),
+      query: (body) => {
+        const { image, title, content } = body;
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        if (image && image[0]) {
+          formData.append('image', image[0]);
+        }
+
+        return { url: 'post', method: 'POST', body: formData };
+      },
     }),
   }),
 });

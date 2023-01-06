@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { ChangeEvent, useId } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { DivInput, LblInput, TxtInput } from './styles';
 
@@ -6,34 +6,41 @@ type Props = {
   name: string;
   label?: string;
   className?: string;
-  type?: string;
   placeholder?: string;
+  onFileChange: (files: FileList) => void;
 };
 
-const Input = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
-  const { name, label, type = 'text', ...rest } = props;
+const FilePicker = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
+  const { name, label, onFileChange, ...rest } = props;
   const id = useId();
   const { control } = useFormContext();
   const { field, fieldState } = useController({ name, control });
 
-  const { ref: _, value, ...restField } = field;
+  const { ref: _ref, value: _value, onChange, ...restField } = field;
   const { error } = fieldState;
+
+  const onChangeFull = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    onChange(e.target.files);
+    const files = e.target.files as FileList;
+    onFileChange(files);
+  };
 
   return (
     <DivInput>
       {label && <LblInput htmlFor={id}>{label}</LblInput>}
       <TxtInput
-        type={type}
+        type="file"
         id={id}
         ref={ref}
         {...restField}
         invalid={!!error}
-        value={value}
+        onChange={onChangeFull}
         {...rest}
       />
     </DivInput>
   );
 });
-Input.displayName = 'Input';
+FilePicker.displayName = 'FilePicker';
 
-export default Input;
+export default FilePicker;

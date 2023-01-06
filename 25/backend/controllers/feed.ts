@@ -26,12 +26,16 @@ export const createPost: RequestHandler = async (req, res) => {
     throw new AppError('Validation Failed', 422, errors);
   }
 
+  if (!req.file) {
+    throw new AppError('No image provided', 422);
+  }
+
   const { title, content } = req.body;
 
   const post = new Post({
     title,
     content,
-    imageUrl: 'images/book.jpg',
+    imageUrl: req.file.path,
     creator: { name: 'David' },
   });
   const result = await post.save();
