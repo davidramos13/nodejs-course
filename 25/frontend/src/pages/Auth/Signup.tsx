@@ -43,15 +43,3 @@ const Signup: React.FC = () => {
 };
 
 export default Signup;
-
-// onBlur={this.inputBlurHandler.bind(this, 'email')}
-// valid={this.state.signupForm['email'].valid}
-// touched={this.state.signupForm['email'].touched}
-
-// onBlur={this.inputBlurHandler.bind(this, 'name')}
-// valid={this.state.signupForm['name'].valid}
-// touched={this.state.signupForm['name'].touched}
-
-// onBlur={this.inputBlurHandler.bind(this, 'password')}
-// valid={this.state.signupForm['password'].valid}
-// touched={this.state.signupForm['password'].touched}

@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { ChangeEvent, useId } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { DivInput, LblInput, TxtInput } from './styles';
 
@@ -8,10 +8,11 @@ type Props = {
   className?: string;
   type?: string;
   placeholder?: string;
+  onFileChange?: (files: FileList) => void;
 };
 
 const Input = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
-  const { name, type = 'text', label, ...rest } = props;
+  const { name, type = 'text', label, onFileChange, ...rest } = props;
   const id = useId();
   const { control } = useFormContext();
 
@@ -20,9 +21,16 @@ const Input = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
       name={name}
       control={control}
       render={({ field, fieldState }) => {
-        const { ref: _, value, ...restField } = field;
+        const { ref: _, value, onChange, ...restField } = field;
         const { error } = fieldState;
         const invalid = !!error;
+
+        const onChangeFull = (e: ChangeEvent<HTMLInputElement>) => {
+          onChange(e);
+          if (type !== 'file' || !onFileChange || !e.target.files) return;
+          const files = e.target.files as FileList;
+          onFileChange(files);
+        };
 
         return (
           <DivInput>
@@ -33,7 +41,8 @@ const Input = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
               ref={ref}
               {...restField}
               invalid={invalid}
-              value={value}
+              onChange={onChangeFull}
+              value={type === 'file' ? undefined : value}
               {...rest}
             />
           </DivInput>

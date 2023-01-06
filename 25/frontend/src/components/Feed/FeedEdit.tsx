@@ -1,23 +1,29 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import tw from 'twin.macro';
 import useFormHook from '../../util/useFormHook';
 import Backdrop from '../Backdrop';
 import Form from '../Form/Form';
 import Input from '../Input';
+import Image from '../Image';
 import TextArea from '../Input/TextArea';
 import Modal from '../Modal';
 import { IPost, PostFormData } from '../../store/feed/interfaces';
 import { z } from 'zod';
+import { generateBase64FromImage } from '../../util/image';
 
 const DivPreview = tw.div`w-60 h-28`;
 
-const schema = z.object({
-  title: z.string().min(5),
-  content: z.string().min(5),
-});
+const getSchema = (isNewPost: boolean) => {
+  const schema = z.object({
+    title: z.string().min(5),
+    image: z.custom<FileList>((file) => !!file),
+    content: z.string().min(5),
+  });
+  return isNewPost ? schema : schema.omit({ image: true });
+};
 
 const getInitialValues = (post?: IPost) => {
-  let values: PostFormData = { title: '', /* imageUrl: '', */ content: '' };
+  let values: PostFormData = { title: '', content: '' };
   if (post) {
     const { title, content } = post;
     values = { title, content };
@@ -35,6 +41,9 @@ type Props = {
 const FeedEdit: React.FC<Props> = (props) => {
   const { editing, loading, selectedPost, onCancelEdit, onFinishEdit } = props;
   const initialValues = getInitialValues(selectedPost);
+  const schema = getSchema(!selectedPost);
+
+  const [imageUrl, setImageUrl] = useState(selectedPost?.imageUrl);
   const formHook = useFormHook(schema, initialValues);
   const { handleSubmit, reset } = formHook;
 
@@ -45,27 +54,33 @@ const FeedEdit: React.FC<Props> = (props) => {
     })();
   };
 
-  const cancelPostChangeHandler = onCancelEdit;
-
   if (!editing) return null;
+
+  const onFileChange = async (files: FileList) => {
+    if (files.length === 0) {
+      setImageUrl(undefined);
+      return;
+    }
+
+    const base64Url = await generateBase64FromImage(files[0]);
+    setImageUrl(base64Url);
+  };
 
   return (
     <Fragment>
-      <Backdrop onClick={cancelPostChangeHandler} />
+      <Backdrop onClick={onCancelEdit} />
       <Modal
         title="New Post"
         acceptEnabled={formHook.formState.isValid}
-        onCancelModal={cancelPostChangeHandler}
+        onCancelModal={onCancelEdit}
         onAcceptModal={acceptPostChangeHandler}
         isLoading={loading}>
         <Form formHook={formHook} onSubmit={onFinishEdit}>
           <Input name="title" label="Title" />
-          <Input type="file" name="image" label="Image" />
+          <Input type="file" name="image" label="Image" onFileChange={onFileChange} />
           <DivPreview>
-            {/* !this.state.imagePreview */ true && <p>Please choose an image.</p>}
-            {/* {this.state.imagePreview && (
-              <Image imageUrl={this.state.imagePreview} contain left />
-            )} */}
+            {!imageUrl && <p>Please choose an image.</p>}
+            {imageUrl && <Image imageUrl={imageUrl} contain left />}
           </DivPreview>
           <TextArea name="content" label="Content" rows={5} />
         </Form>
@@ -75,16 +90,3 @@ const FeedEdit: React.FC<Props> = (props) => {
 };
 
 export default FeedEdit;
-
-// onBlur={this.inputBlurHandler.bind(this, 'title')}
-// valid={this.state.postForm['title'].valid}
-// touched={this.state.postForm['title'].touched}
-// value={this.state.postForm['title'].value}
-
-// onBlur={this.inputBlurHandler.bind(this, 'image')}
-// valid={this.state.postForm['image'].valid}
-// touched={this.state.postForm['image'].touched}
-
-// onBlur={this.inputBlurHandler.bind(this, 'content')}
-// valid={this.state.postForm['content'].valid}
-// touched={this.state.postForm['content'].touched}

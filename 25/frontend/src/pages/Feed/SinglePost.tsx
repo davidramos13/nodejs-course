@@ -15,7 +15,6 @@ const SinglePost: React.FC = () => {
   if (!postId || isLoading || error || !post) return null;
 
   const date = new Date(post.createdAt).toLocaleDateString();
-  const url = `${import.meta.env.VITE_BACKEND_URL}/${post.imageUrl}`;
 
   return (
     <SecContainer>
@@ -24,7 +23,7 @@ const SinglePost: React.FC = () => {
         Created by {post.creator.name} on {date}
       </H2Legend>
       <DivImage>
-        <Image imageUrl={url} contain />
+        <Image imageUrl={post.imageUrl} contain />
       </DivImage>
       <p>{post.content}</p>
     </SecContainer>

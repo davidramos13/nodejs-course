@@ -41,11 +41,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-
-// onBlur={this.inputBlurHandler.bind(this, 'email')}
-// valid={this.state.loginForm['email'].valid}
-// touched={this.state.loginForm['email'].touched}
-
-// onBlur={this.inputBlurHandler.bind(this, 'password')}
-// valid={this.state.loginForm['password'].valid}
-// touched={this.state.loginForm['password'].touched}
