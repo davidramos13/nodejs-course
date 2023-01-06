@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/posts', feedController.getPosts);
 
 // GET /feed/posts/{id}
-router.get('/posts/:id', feedController.getPost);
+router.get('/post/:id', feedController.getPost);
 
 // POST /feed/post
 router.post(
@@ -17,5 +17,15 @@ router.post(
   [body('title').trim().isLength({ min: 5 }), body('content').trim().isLength({ min: 5 })],
   feedController.createPost,
 );
+
+// PUT /feed/post
+router.put(
+  '/post/:id',
+  [body('title').trim().isLength({ min: 5 }), body('content').trim().isLength({ min: 5 })],
+  feedController.updatePost,
+);
+
+// DELETE /feed/post/{id}
+router.delete('/post/:id', feedController.deletePost);
 
 export default router;

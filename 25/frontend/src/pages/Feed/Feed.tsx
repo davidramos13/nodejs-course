@@ -9,90 +9,83 @@ import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
-import { useCreatePostMutation, useGetPostsQuery } from '../../store/feed/apis';
-import { PostFormData } from '../../store/feed/interfaces';
-import getLastError from '../../util/getLastError';
+import { IPost, PostFormData } from '../../store/feed/interfaces';
 import useFormHook from '../../util/useFormHook';
+import useFeedQueries from './useFeedQueries';
 
 const SecStatus = tw.section`w-[90%] my-4 mx-auto md:w-[30rem]`;
 
 const schema = z.object({ status: z.string() });
 type FeedData = { status: string };
 const defaultValues: FeedData = { status: '' };
-// old state
-// isEditing: false, posts: [], totalPosts: 0, editPost: null,
-// status: '', postPage: 1, postsLoading: true, editLoading: false
 
 const Feed: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
-  const {
-    data,
-    error: fetchError,
-    isLoading,
-    fulfilledTimeStamp: fetchTime,
-    refetch,
-  } = useGetPostsQuery();
-  const [
-    createPost,
-    { isSuccess, error: createError, isLoading: createLoading, fulfilledTimeStamp: createTime },
-  ] = useCreatePostMutation();
   const [page, setPage] = useState(1);
-  const [isEditing, setIsEditing] = useState(false);
+  const { data, error, isLoading, editLoading, refetch, createPost, updatePost, deletePost } =
+    useFeedQueries(page);
 
-  const error = getLastError([fetchError, fetchTime], [createError, createTime]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
 
   //#region TEMP COMMENTS
-
-  // fetch posts on mount
-
   const statusUpdate = () => {
     // call update status
   };
 
-  const startEdit = (_id: string) => () => {
-    // this.setState(prevState => {
-    //   const loadedPost = { ...prevState.posts.find(p => p._id === postId) };
-    //   return { isEditing: true, editPost: loadedPost };
-    // });
+  const startEdit = (id: string) => () => {
+    const post = data?.posts?.find((p) => p._id === id);
+    if (!post) return;
+    setSelectedPost(post);
+    setIsEditing(true);
   };
 
   const cancelEdit = () => {
+    setSelectedPost(null);
     setIsEditing(false);
-    // this.setState({ isEditing: false, editPost: null });
   };
 
   const finishEdit = async (data: PostFormData) => {
-    await createPost(data);
+    if (selectedPost) {
+      await updatePost({ ...data, _id: selectedPost._id, imageUrl: selectedPost.imageUrl });
+    } else {
+      await createPost(data);
+    }
+    setSelectedPost(null);
     setIsEditing(false);
     refetch();
   };
 
-  const deletePost = (_id: string) => () => {
-    // call delete, update posts in page
+  const deletePostHandler = (id: string) => async () => {
+    await deletePost(id);
+    setPage(1);
+    refetch();
   };
 
   const newPostHandler = () => {
     setIsEditing(true);
   };
 
-  const catchError = () => {
-    // this.setState({ error: error });
-  };
+  const loadPosts = (direction: number) => () => {
+    if (!data) return;
+    const maxPage = Math.ceil(data.totalItems / 2);
+    const newPage = page + direction;
 
-  const loadPosts = (direction?: string) => () => {
-    // TODO
+    if (newPage === 0 || newPage > maxPage) return; // should not overflow
+    setPage(newPage);
   };
   //#endregion
   return (
     <Fragment>
       <ErrorHandler error={error} />
-      <FeedEdit
-        editing={isEditing}
-        selectedPost={undefined} // temporal until having edit fetch ready
-        loading={createLoading}
-        onCancelEdit={cancelEdit}
-        onFinishEdit={finishEdit}
-      />
+      {isEditing && (
+        <FeedEdit
+          selectedPost={selectedPost} // temporal until having edit fetch ready
+          loading={editLoading}
+          onCancelEdit={cancelEdit}
+          onFinishEdit={finishEdit}
+        />
+      )}
       <SecStatus>
         <Form useStyled formHook={formHook} onSubmit={statusUpdate}>
           <Input name="status" placeholder="Your status" />
@@ -115,9 +108,9 @@ const Feed: React.FC = () => {
           <p tw="text-center">No posts found.</p>
         ) : (
           <Paginator
-            onPrevious={loadPosts('previous')}
-            onNext={loadPosts('next')}
-            lastPage={0}
+            onPrevious={loadPosts(-1)}
+            onNext={loadPosts(1)}
+            lastPage={Math.ceil(data.totalItems / 2)}
             currentPage={page}>
             {data.posts.map((post) => (
               <Post
@@ -129,7 +122,7 @@ const Feed: React.FC = () => {
                 image={post.imageUrl}
                 content={post.content}
                 onStartEdit={startEdit(post._id)}
-                onDelete={deletePost(post._id)}
+                onDelete={deletePostHandler(post._id)}
               />
             ))}
           </Paginator>

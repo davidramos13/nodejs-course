@@ -10,5 +10,6 @@ export interface IPost {
 export type PostFormData = {
   title: string;
   image?: FileList;
+  imageUrl?: string;
   content: string;
 };

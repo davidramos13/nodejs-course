@@ -20,10 +20,10 @@ const getSchema = (isNewPost: boolean) => {
     image: z.custom<FileList>((file) => !!file),
     content: z.string().min(5),
   });
-  return isNewPost ? schema : schema.omit({ image: true });
+  return isNewPost ? schema : schema.partial({ image: true });
 };
 
-const getInitialValues = (post?: IPost) => {
+const getInitialValues = (post: IPost | null) => {
   let values: PostFormData = { title: '', content: '' };
   if (post) {
     const { title, content } = post;
@@ -33,31 +33,24 @@ const getInitialValues = (post?: IPost) => {
 };
 
 type Props = {
-  editing: boolean;
   loading: boolean;
-  selectedPost?: IPost;
+  selectedPost: IPost | null;
   onCancelEdit(): void;
   onFinishEdit(data: PostFormData): void;
 };
 const FeedEdit: React.FC<Props> = (props) => {
-  const { editing, loading, selectedPost, onCancelEdit, onFinishEdit } = props;
+  const { loading, selectedPost, onCancelEdit, onFinishEdit } = props;
   const initialValues = getInitialValues(selectedPost);
   const schema = getSchema(!selectedPost);
 
   const [imageUrl, setImageUrl] = useState(selectedPost?.imageUrl);
   const formHook = useFormHook(schema, initialValues);
-  const { handleSubmit, reset } = formHook;
+  const { handleSubmit } = formHook;
 
   const acceptPostChangeHandler = async () => {
     // this submit is triggered manually (the base source is not using a button type=submit in the modal)
-    await handleSubmit((data) => {
-      reset();
-      setImageUrl(undefined);
-      onFinishEdit(data);
-    })();
+    await handleSubmit((data) => onFinishEdit(data))();
   };
-
-  if (!editing) return null;
 
   const onFileChange = async (files: FileList) => {
     if (files.length === 0) {
@@ -73,7 +66,7 @@ const FeedEdit: React.FC<Props> = (props) => {
     <Fragment>
       <Backdrop onClick={onCancelEdit} />
       <Modal
-        title="New Post"
+        title={selectedPost ? 'Edit Post' : 'New Post'}
         acceptEnabled={formHook.formState.isValid}
         onCancelModal={onCancelEdit}
         onAcceptModal={acceptPostChangeHandler}
