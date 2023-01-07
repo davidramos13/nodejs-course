@@ -10,6 +10,8 @@ import feedRoutes from './routes/feed';
 import authRoutes from './routes/auth';
 import AppError from './util/AppError';
 import { FileFilterFn } from './util/interfaces';
+import { createServer } from 'http';
+import io from './util/io';
 
 dotenv.config();
 
@@ -56,7 +58,9 @@ app.use((error: Error | AppError, _req: Request, res: Response, _next: NextFunct
 const load = async () => {
   try {
     await mongoose.connect(process.env.MONGO_CONNECTION);
-    app.listen(8080);
+    const httpServer = createServer(app);
+    io.init(httpServer);
+    httpServer.listen(8080);
     console.log('SERVER READY');
   } catch (ex) {
     console.log(ex);

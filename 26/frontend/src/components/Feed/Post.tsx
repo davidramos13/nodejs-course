@@ -20,11 +20,12 @@ type Props = {
   title: string;
   image: string;
   content: string;
+  loading: boolean;
   onStartEdit(): void;
   onDelete(): void;
 };
 const Post: React.FC<Props> = (props) => {
-  const { id, author, date, title, onStartEdit, onDelete } = props;
+  const { id, author, date, title, onStartEdit, onDelete, loading } = props;
 
   const onView = noop;
 
@@ -47,7 +48,7 @@ const Post: React.FC<Props> = (props) => {
         <Button mode="flat" onClick={onStartEdit}>
           Edit
         </Button>
-        <Button mode="flat" design="danger" onClick={onDelete}>
+        <Button mode="flat" design="danger" onClick={onDelete} loading={loading}>
           Delete
         </Button>
       </DivActions>

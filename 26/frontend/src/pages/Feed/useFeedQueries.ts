@@ -11,6 +11,7 @@ import getLastError from '../../util/getLastError';
 const useFeedQueries = (fetchPage: number) => {
   const {
     data,
+    isSuccess: dataFetched,
     error: fetchError,
     isLoading: fetchLoading,
     fulfilledTimeStamp: fetchTime,
@@ -32,7 +33,7 @@ const useFeedQueries = (fetchPage: number) => {
     { error: deleteError, isLoading: deleteLoading, fulfilledTimeStamp: deleteTime },
   ] = useDeletePostMutation(); // PUT /post/:id
 
-  const { data: statusData, isSuccess } = useGetStatusQuery();
+  const { data: statusData, isSuccess: statusFetched } = useGetStatusQuery();
   const [updateStatus] = useUpdateStatusMutation();
 
   const error = getLastError(
@@ -42,21 +43,28 @@ const useFeedQueries = (fetchPage: number) => {
     [deleteError, deleteTime],
   );
 
-  const isLoading = fetchLoading || deleteLoading;
-  const editLoading = createLoading || updateLoading;
+  const mainLoading = fetchLoading;
+  const editLoading = createLoading || updateLoading || deleteLoading;
 
   return {
-    data,
-    refetch,
+    queries: {
+      data,
+      dataFetched,
+      refetch,
+      status: statusData?.status,
+      statusFetched,
+    },
+    mutations: {
+      createPost,
+      updatePost,
+      deletePost,
+      updateStatus,
+    },
+    loaders: {
+      mainLoading,
+      editLoading,
+    },
     error,
-    isLoading,
-    editLoading,
-    createPost,
-    updatePost,
-    deletePost,
-    status: statusData?.status,
-    updateStatus,
-    statusFetched: isSuccess,
   };
 };
 

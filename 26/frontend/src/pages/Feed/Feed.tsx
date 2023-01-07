@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import tw from 'twin.macro';
 import { z } from 'zod';
+import openSocket, { Socket } from 'socket.io-client';
 import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
@@ -20,17 +21,30 @@ type FeedData = { status: string };
 const defaultValues: FeedData = { status: '' };
 
 const Feed: React.FC = () => {
-  const formHook = useFormHook(schema, defaultValues);
   const [page, setPage] = useState(1);
-  const { data, error, status, statusFetched, isLoading, refetch, ...rest } = useFeedQueries(page);
-  const { editLoading, createPost, updatePost, deletePost, updateStatus } = rest;
-
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
+
+  const formHook = useFormHook(schema, defaultValues);
+  const { queries, mutations, loaders, error } = useFeedQueries(page);
+  const { data, dataFetched, refetch, status, statusFetched } = queries;
+  const { createPost, deletePost, updatePost, updateStatus } = mutations;
+  const { mainLoading, editLoading } = loaders;
+  const socketRef = useRef<{ socket: Socket | null }>({ socket: null });
 
   useEffect(() => {
     if (statusFetched) formHook.reset({ status });
   }, [statusFetched]);
+
+  useEffect(() => {
+    if (dataFetched && !socketRef.current.socket) {
+      const socket = openSocket(import.meta.env.VITE_BACKEND_URL);
+      socket.on('posts', (/* { payload: {...}} */) => {
+        refetch();
+      });
+      socketRef.current.socket = socket;
+    }
+  }, [dataFetched]);
 
   //#region TEMP COMMENTS
   const statusUpdate = async (data: { status: string }) => {
@@ -57,13 +71,13 @@ const Feed: React.FC = () => {
     }
     setSelectedPost(null);
     setIsEditing(false);
-    refetch();
+    // refetch();
   };
 
   const deletePostHandler = (id: string) => async () => {
     await deletePost(id);
     setPage(1);
-    refetch();
+    // refetch();
   };
 
   const newPostHandler = () => {
@@ -75,8 +89,10 @@ const Feed: React.FC = () => {
     const maxPage = Math.ceil(data.totalItems / 2);
     const newPage = page + direction;
 
-    if (newPage === 0 || newPage > maxPage) return; // should not overflow
-    setPage(newPage);
+    if (newPage === 0 || newPage > maxPage) {
+      // this could happen on refetches after a delete for example
+      setPage(1);
+    } else setPage(newPage);
   };
   //#endregion
   return (
@@ -104,7 +120,7 @@ const Feed: React.FC = () => {
         </Button>
       </section>
       <section>
-        {isLoading ? (
+        {mainLoading ? (
           <div tw="text-center mt-8">
             <Loader />
           </div>
@@ -127,6 +143,7 @@ const Feed: React.FC = () => {
                 content={post.content}
                 onStartEdit={startEdit(post._id)}
                 onDelete={deletePostHandler(post._id)}
+                loading={editLoading}
               />
             ))}
           </Paginator>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { check, body } from 'express-validator/check';
+import { check, body } from 'express-validator';
 
 import * as authController from '../controllers/auth';
 import User from '../models/User';

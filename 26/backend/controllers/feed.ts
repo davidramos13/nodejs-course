@@ -6,6 +6,7 @@ import Post from '../models/Post';
 import AppError from '../util/AppError';
 import _sleep from '../util/sleep';
 import User from '../models/User';
+import io from '../util/io';
 
 export const getPosts: RequestHandler = async (req, res) => {
   // await _sleep(3000); for testing frontend loaders
@@ -13,6 +14,7 @@ export const getPosts: RequestHandler = async (req, res) => {
   const perPage = 2;
   const totalItems = await Post.countDocuments();
   const posts = await Post.find()
+    .sort({ createdAt: -1 })
     .skip((currentPage - 1) * perPage)
     .limit(perPage)
     .populate('creator');
@@ -50,6 +52,9 @@ export const createPost: RequestHandler = async (req, res) => {
   user.posts.push(result._id);
   await user.save();
 
+  // I changed approach, to prefer triggering a refetch from the client on this signal
+  io.get().emit('posts' /*, { payload: {...}} */);
+
   res.status(201).json({ message: 'Post created!', post: result });
 };
 
@@ -77,6 +82,8 @@ export const updatePost: RequestHandler = async (req, res) => {
   Object.assign(post, { title, content, imageUrl });
   const result = await post.save();
 
+  io.get().emit('posts');
+
   res.status(200).json({ message: 'Post updated!', post: result });
 };
 
@@ -97,6 +104,8 @@ export const deletePost: RequestHandler = async (req, res) => {
   const postsUpdated = user.posts.slice().filter((p) => p._id.toString() !== id);
   user.posts = postsUpdated;
   await user.save();
+
+  io.get().emit('posts');
 
   res.status(200).json({ message: 'Post deleted!' });
 };

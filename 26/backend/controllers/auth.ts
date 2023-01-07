@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import User from '../models/User';
-import { validationResult } from 'express-validator/check';
+import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import AppError from '../util/AppError';

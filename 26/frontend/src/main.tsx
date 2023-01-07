@@ -6,8 +6,6 @@ import GlobalStyles from './styles/GlobalStyles';
 import { Provider } from 'react-redux';
 import store from './store';
 
-console.log('backend url:', import.meta.env.VITE_BACKEND_URL);
-
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(
