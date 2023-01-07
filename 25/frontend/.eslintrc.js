@@ -41,7 +41,7 @@ module.exports = {
     ],
     'react/no-unknown-property': [2, { ignore: ['tw'] }],
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks/exhaustive-deps': 'off',
     'prettier/prettier': [
       'warn',
       {

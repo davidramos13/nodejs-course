@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { z } from 'zod';
 import Button from '../../components/Button/Button';
@@ -22,15 +22,19 @@ const defaultValues: FeedData = { status: '' };
 const Feed: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
   const [page, setPage] = useState(1);
-  const { data, error, isLoading, editLoading, refetch, createPost, updatePost, deletePost } =
-    useFeedQueries(page);
+  const { data, error, status, statusFetched, isLoading, refetch, ...rest } = useFeedQueries(page);
+  const { editLoading, createPost, updatePost, deletePost, updateStatus } = rest;
 
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
 
+  useEffect(() => {
+    if (statusFetched) formHook.reset({ status });
+  }, [statusFetched]);
+
   //#region TEMP COMMENTS
-  const statusUpdate = () => {
-    // call update status
+  const statusUpdate = async (data: { status: string }) => {
+    await updateStatus({ status: data.status });
   };
 
   const startEdit = (id: string) => () => {

@@ -7,6 +7,7 @@ import 'express-async-errors'; // needed for easier async error handling (until 
 import multer from 'multer';
 
 import feedRoutes from './routes/feed';
+import authRoutes from './routes/auth';
 import AppError from './util/AppError';
 import { FileFilterFn } from './util/interfaces';
 
@@ -40,6 +41,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 app.use((error: Error | AppError, _req: Request, res: Response, _next: NextFunction) => {
   if ('statusCode' in error) {

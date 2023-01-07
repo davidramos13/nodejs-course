@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { readTokenFromStorage } from '../../util/storage';
 import { IPost, PostFormData } from './interfaces';
 
 const getFormData = (data: Omit<PutPost, '_id'>) => {
@@ -15,15 +16,24 @@ const getFormData = (data: Omit<PutPost, '_id'>) => {
   return formData;
 };
 
-type GetPosts = { posts: IPost[]; totalItems: number };
+type GetPostsResponse = { posts: IPost[]; totalItems: number };
 type PutPost = PostFormData & { _id: string };
-// Define a service using a base URL and expected endpoints
+
 export const postsApi = createApi({
   reducerPath: 'postsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_BACKEND_URL}/feed/` }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${import.meta.env.VITE_BACKEND_URL}/feed/`,
+    prepareHeaders: (headers) => {
+      const token = readTokenFromStorage();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
     getPost: builder.query<IPost, string | undefined>({ query: (id) => `post/${id}` }),
-    getPosts: builder.query<GetPosts, number>({
+    getPosts: builder.query<GetPostsResponse, number>({
       query: (page) => ({ url: 'posts', params: { page } }),
     }),
     createPost: builder.mutation<void, PostFormData>({
@@ -42,6 +52,10 @@ export const postsApi = createApi({
     deletePost: builder.mutation<void, string>({
       query: (id) => ({ url: `post/${id}`, method: 'DELETE' }),
     }),
+    getStatus: builder.query<{ status: string }, void>({ query: () => 'status' }),
+    updateStatus: builder.mutation<void, { status: string }>({
+      query: (body) => ({ url: 'status', method: 'POST', body }),
+    }),
   }),
 });
 
@@ -53,4 +67,6 @@ export const {
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useGetStatusQuery,
+  useUpdateStatusMutation,
 } = postsApi;

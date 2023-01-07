@@ -4,9 +4,11 @@ import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import Feed from './pages/Feed/Feed';
 import SinglePost from './pages/Feed/SinglePost';
+import { useAppSelector } from './store';
 
-type Props = { isAuth: boolean };
-const AppRoutes: React.FC<Props> = ({ isAuth }) => {
+const AppRoutes: React.FC = () => {
+  const isAuth = useAppSelector(({ auth }) => auth.isAuth);
+
   if (!isAuth) {
     return (
       <Routes>

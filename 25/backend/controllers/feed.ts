@@ -5,6 +5,7 @@ import fs from 'fs';
 import Post from '../models/Post';
 import AppError from '../util/AppError';
 import _sleep from '../util/sleep';
+import User from '../models/User';
 
 export const getPosts: RequestHandler = async (req, res) => {
   // await _sleep(3000); for testing frontend loaders
@@ -13,14 +14,19 @@ export const getPosts: RequestHandler = async (req, res) => {
   const totalItems = await Post.countDocuments();
   const posts = await Post.find()
     .skip((currentPage - 1) * perPage)
-    .limit(perPage);
+    .limit(perPage)
+    .populate('creator');
   res.status(200).json({ posts, totalItems });
 };
 
 export const getPost: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  const post = await Post.findById(id);
+  const post = await Post.findById(id).populate('creator');
   if (!post) throw new AppError('Post not found', 404);
+
+  if (post.creator._id.toString() !== req.userId) {
+    throw new AppError('Not authorized!', 403);
+  }
 
   res.status(200).json(post);
 };
@@ -36,9 +42,13 @@ export const createPost: RequestHandler = async (req, res) => {
     title,
     content,
     imageUrl: req.file.path,
-    creator: { name: 'David' },
+    creator: req.userId,
   });
   const result = await post.save();
+
+  const user = await User.findById(req.userId);
+  user.posts.push(result._id);
+  await user.save();
 
   res.status(201).json({ message: 'Post created!', post: result });
 };
@@ -76,10 +86,37 @@ export const deletePost: RequestHandler = async (req, res) => {
   const post = await Post.findById(id);
   if (!post) throw new AppError('Could not find post', 404);
 
+  if (post.creator.toString() !== req.userId) {
+    throw new AppError('Not authorized!', 403);
+  }
+
   clearImage(post.imageUrl);
   await post.delete();
 
+  const user = await User.findById(req.userId);
+  const postsUpdated = user.posts.slice().filter((p) => p._id.toString() !== id);
+  user.posts = postsUpdated;
+  await user.save();
+
   res.status(200).json({ message: 'Post deleted!' });
+};
+
+export const getStatus: RequestHandler = async (req, res) => {
+  const user = await User.findById(req.userId);
+  res.status(200).json({ status: user.status });
+};
+
+export const updateStatus: RequestHandler = async (req, res) => {
+  const { status } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) throw new AppError('Validation Failed', 422, errors);
+
+  const user = await User.findById(req.userId);
+  user.status = status;
+  await user.save();
+
+  res.status(201).json({ message: 'Status updated!' });
 };
 
 const clearImage = (filePath: string) => {

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
 import tw, { css, styled } from 'twin.macro';
+import { useAppSelector } from '../../store';
 
 const navItems = [
   { id: 'feed', text: 'Feed', link: '/', auth: true },
@@ -28,9 +29,10 @@ const BtnLogout = tw.button`p-0 text-white border-none
   bg-transparent cursor-pointer`;
 //#endregion
 
-type Props = { isAuth: boolean; mobile?: boolean; onChoose?(): void; onLogout(): void };
+type Props = { mobile?: boolean; onChoose?(): void; onLogout(): void };
 const NavigationItems: React.FC<Props> = (props) => {
-  const { isAuth, mobile = false, onChoose, onLogout } = props;
+  const { mobile = false, onChoose, onLogout } = props;
+  const isAuth = useAppSelector(({ auth }) => auth.isAuth);
   return (
     <Fragment>
       {navItems

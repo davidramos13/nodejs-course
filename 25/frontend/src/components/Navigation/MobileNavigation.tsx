@@ -8,25 +8,20 @@ const NavMobile = styled.nav<{ open: boolean }>(({ open }) => [
   open && tw`translate-x-0`,
 ]);
 
-const UlItems = styled.ul<{ mobile: boolean }>(({ mobile }) => [
-  tw`list-none flex m-0 p-0`,
-  mobile && tw`flex-col`,
-]);
+const UlItems = tw.ul`list-none flex m-0 p-0 flex-col`;
 
 type Props = {
   open: boolean;
-  mobile?: boolean;
-  isAuth: boolean;
   onChooseItem(): void;
   onLogout(): void;
 };
 const MobileNavigation: React.FC<Props> = (props) => {
-  const { open, mobile = false, onChooseItem, isAuth, onLogout } = props;
+  const { open, onChooseItem, onLogout } = props;
 
   return (
     <NavMobile open={open}>
-      <UlItems mobile={mobile}>
-        <NavigationItems mobile onChoose={onChooseItem} isAuth={isAuth} onLogout={onLogout} />
+      <UlItems>
+        <NavigationItems mobile onChoose={onChooseItem} onLogout={onLogout} />
       </UlItems>
     </NavMobile>
   );

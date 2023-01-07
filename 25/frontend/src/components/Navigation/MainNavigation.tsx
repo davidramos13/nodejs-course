@@ -9,8 +9,8 @@ const NavMain = tw.nav`flex h-full px-4 items-center`;
 const DivSpacer = tw.div`flex-1`;
 const UlItems = tw.ul`list-none p-0 mx-6 hidden md:flex`;
 
-type Props = { onOpenMobileNav(): void; isAuth: boolean; onLogout(): void };
-const MainNavigation: React.FC<Props> = ({ onOpenMobileNav, isAuth, onLogout }) => (
+type Props = { onOpenMobileNav(): void; onLogout(): void };
+const MainNavigation: React.FC<Props> = ({ onOpenMobileNav, onLogout }) => (
   <NavMain>
     <MobileToggle onOpen={onOpenMobileNav} />
     <div>
@@ -20,7 +20,7 @@ const MainNavigation: React.FC<Props> = ({ onOpenMobileNav, isAuth, onLogout }) 
     </div>
     <DivSpacer />
     <UlItems>
-      <NavigationItems isAuth={isAuth} onLogout={onLogout} />
+      <NavigationItems onLogout={onLogout} />
     </UlItems>
   </NavMain>
 );
