@@ -1,0 +1,6 @@
+images/**
+!images/.gitkeep
+node_modules
+.vscode/*
+
+.env
