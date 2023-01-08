@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import tw from 'twin.macro';
 import useFormHook from '../../util/useFormHook';
 import Backdrop from '../Backdrop';
@@ -7,45 +7,46 @@ import Input from '../Input';
 import Image from '../Image';
 import TextArea from '../Input/TextArea';
 import Modal from '../Modal';
-import { IPost, PostFormData } from '../../store/feed/interfaces';
 import { z } from 'zod';
-import { generateBase64FromImage } from '../../util/image';
 import FilePicker from '../Input/FilePicker';
+import { Post, PostForm } from '../../store/feed';
+import { usePutImageMutation } from '../../store/postImage';
 
 const DivPreview = tw.div`w-60 h-28`;
 
 const getSchema = (isNewPost: boolean) => {
   const schema = z.object({
     title: z.string().min(5),
-    image: z.custom<FileList>((file) => !!file),
+    image: z.custom<FileList>((file) => file && (file as FileList).length),
+    imageUrl: z.string(),
     content: z.string().min(5),
   });
   return isNewPost ? schema : schema.partial({ image: true });
 };
 
-const getInitialValues = (post: IPost | null) => {
-  let values: PostFormData = { title: '', content: '' };
+const getInitialValues = (post: PostForm | null) => {
+  let values: PostForm = { title: '', content: '', imageUrl: '' };
   if (post) {
-    const { title, content } = post;
-    values = { title, content };
+    const { title, content, imageUrl } = post;
+    values = { title, content, imageUrl };
   }
   return values;
 };
 
 type Props = {
   loading: boolean;
-  selectedPost: IPost | null;
+  selectedPost: Post | null;
   onCancelEdit(): void;
-  onFinishEdit(data: PostFormData): void;
+  onFinishEdit(data: PostForm): void;
 };
 const FeedEdit: React.FC<Props> = (props) => {
   const { loading, selectedPost, onCancelEdit, onFinishEdit } = props;
   const initialValues = getInitialValues(selectedPost);
   const schema = getSchema(!selectedPost);
-
-  const [imageUrl, setImageUrl] = useState(selectedPost?.imageUrl);
   const formHook = useFormHook(schema, initialValues);
-  const { handleSubmit } = formHook;
+  const { handleSubmit, setValue, watch } = formHook;
+
+  const [uploadImage] = usePutImageMutation();
 
   const acceptPostChangeHandler = async () => {
     // this submit is triggered manually (the base source is not using a button type=submit in the modal)
@@ -54,13 +55,16 @@ const FeedEdit: React.FC<Props> = (props) => {
 
   const onFileChange = async (files: FileList) => {
     if (files.length === 0) {
-      setImageUrl(undefined);
+      setValue('imageUrl', '');
       return;
     }
 
-    const base64Url = await generateBase64FromImage(files[0]);
-    setImageUrl(base64Url);
+    const result = await uploadImage({ image: files });
+    if ('error' in result) return;
+    setValue('imageUrl', result.data.filePath);
   };
+
+  const imageUrl = watch('imageUrl');
 
   return (
     <Fragment>

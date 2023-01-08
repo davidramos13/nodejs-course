@@ -5,28 +5,28 @@ import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
-import { useAppDispatch } from '../../store';
-import { PostLogin, useLoginMutation } from '../../store/auth/apis';
-import { setCredentials } from '../../store/auth/slice';
+import { useCreateUserMutation } from '../../store/auth';
+import { CreateUserMutationVariables } from '../../store/auth/graphql/CreateUser.generated';
 import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
 
 const schema = z.object({
   email: z.string().email(),
+  name: z.string(),
   password: z.string().min(5),
 });
 
-const defaultValues: PostLogin = { email: '', password: '' };
+const defaultValues: CreateUserMutationVariables = { email: '', name: '', password: '' };
 
-const Login: React.FC = () => {
+const Signup: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
-  const [login, { isLoading, error }] = useLoginMutation();
-  const dispatch = useAppDispatch();
+  const [signup, { isLoading, error }] = useCreateUserMutation();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: PostLogin) => {
-    const result = await login(data).unwrap();
-    dispatch(setCredentials(result));
+  const onSubmit = async (data: CreateUserMutationVariables) => {
+    const response = await signup(data).unwrap();
+    if ('error' in response) return;
+
     navigate('/');
   };
 
@@ -35,10 +35,11 @@ const Login: React.FC = () => {
       <ErrorHandler error={error} />
       <Auth>
         <Form formHook={formHook} onSubmit={onSubmit}>
-          <Input label="Your E-Mail" type="email" name="email" />
-          <Input label="Password" type="password" name="password" />
+          <Input name="email" label="Your E-Mail" type="email" />
+          <Input name="name" label="Your Name" />
+          <Input name="password" label="Password" type="password" />
           <Button mode="raised" type="submit" loading={isLoading}>
-            Login
+            Signup
           </Button>
         </Form>
       </Auth>
@@ -46,4 +47,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Signup;

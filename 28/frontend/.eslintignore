@@ -1,3 +1,5 @@
+codegen.yml
+*.generated.ts
 node_modules/**
 .DS_Store
 dist
