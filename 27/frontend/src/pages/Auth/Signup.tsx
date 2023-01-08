@@ -5,7 +5,8 @@ import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
-import { PutSignup, useSignupMutation } from '../../store/auth/apis';
+import { useCreateUserMutation } from '../../store/auth';
+import { CreateUserMutationVariables } from '../../store/auth/graphql/CreateUser.generated';
 import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
 
@@ -15,15 +16,17 @@ const schema = z.object({
   password: z.string().min(5),
 });
 
-const defaultValues: PutSignup = { email: '', name: '', password: '' };
+const defaultValues: CreateUserMutationVariables = { email: '', name: '', password: '' };
 
 const Signup: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
-  const [signup, { isLoading, error }] = useSignupMutation();
+  const [signup, { isLoading, error }] = useCreateUserMutation();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: PutSignup) => {
-    await signup(data).unwrap();
+  const onSubmit = async (data: CreateUserMutationVariables) => {
+    const response = await signup(data).unwrap();
+    if ('error' in response) return;
+
     navigate('/');
   };
 

@@ -5,18 +5,18 @@ import {
   useGetStatusQuery,
   useUpdatePostMutation,
   useUpdateStatusMutation,
-} from '../../store/feed/apis';
+} from '../../store/feed';
 import getLastError from '../../util/getLastError';
 
 const useFeedQueries = (fetchPage: number) => {
   const {
     data,
-    isSuccess: dataFetched,
+    isSuccess: postsFetched,
     error: fetchError,
     isLoading: fetchLoading,
     fulfilledTimeStamp: fetchTime,
     refetch,
-  } = useGetPostsQuery(fetchPage); // GET /posts
+  } = useGetPostsQuery({ page: fetchPage }); // GET /posts
 
   const [
     createPost,
@@ -46,12 +46,15 @@ const useFeedQueries = (fetchPage: number) => {
   const mainLoading = fetchLoading;
   const editLoading = createLoading || updateLoading || deleteLoading;
 
+  const postsResult = data ? data.posts : undefined;
+  const status = statusData ? statusData.user.status : undefined;
+
   return {
     queries: {
-      data,
-      dataFetched,
+      postsFetched,
+      postsResult,
       refetch,
-      status: statusData?.status,
+      status,
       statusFetched,
     },
     mutations: {

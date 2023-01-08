@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import tw from 'twin.macro';
 import Image from '../../components/Image';
-import { useGetPostQuery } from '../../store/feed/apis';
+import { useGetPostQuery } from '../../store/feed';
 
 const SecContainer = tw.section`w-[90%] m-auto text-center text-$violet md:w-[40rem]`;
 const H2Legend = tw.h2`text-base text-[#464646] pb-4 border-b-2 border-b-[#464646]`;
@@ -10,8 +10,9 @@ const DivImage = tw.div`w-80 h-80 my-4 mx-auto`;
 
 const SinglePost: React.FC = () => {
   const { postId } = useParams();
-  const { data: post, error, isLoading } = useGetPostQuery(postId);
+  const { data, error, isLoading } = useGetPostQuery({ id: postId as string });
 
+  const post = data?.post;
   if (!postId || isLoading || error || !post) return null;
 
   const date = new Date(post.createdAt).toLocaleDateString();

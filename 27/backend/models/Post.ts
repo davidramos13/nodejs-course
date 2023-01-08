@@ -1,11 +1,13 @@
 import { model, Schema, Types } from 'mongoose';
+import { DocumentResult } from '../util/interfaces';
 
-export interface IPost {
+export interface IPost extends DocumentResult<IPost> {
   title: string;
   imageUrl: string;
   content: string;
   creator: Types.ObjectId;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const schema = new Schema<IPost>(

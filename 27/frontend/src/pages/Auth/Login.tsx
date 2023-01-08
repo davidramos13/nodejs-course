@@ -6,7 +6,7 @@ import ErrorHandler from '../../components/ErrorHandler';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import { useAppDispatch } from '../../store';
-import { PostLogin, useLoginMutation } from '../../store/auth/apis';
+import { LoginMutationVariables, useLoginMutation } from '../../store/auth/graphql/Login.generated';
 import { setCredentials } from '../../store/auth/slice';
 import useFormHook from '../../util/useFormHook';
 import Auth from './Auth';
@@ -16,7 +16,7 @@ const schema = z.object({
   password: z.string().min(5),
 });
 
-const defaultValues: PostLogin = { email: '', password: '' };
+const defaultValues: LoginMutationVariables = { email: '', password: '' };
 
 const Login: React.FC = () => {
   const formHook = useFormHook(schema, defaultValues);
@@ -24,9 +24,11 @@ const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: PostLogin) => {
-    const result = await login(data).unwrap();
-    dispatch(setCredentials(result));
+  const onSubmit = async (data: LoginMutationVariables) => {
+    const response = await login(data);
+    if ('error' in response) return;
+
+    dispatch(setCredentials(response.data.login));
     navigate('/');
   };
 

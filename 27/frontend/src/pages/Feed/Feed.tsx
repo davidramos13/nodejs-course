@@ -1,16 +1,15 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import tw from 'twin.macro';
 import { z } from 'zod';
-import openSocket, { Socket } from 'socket.io-client';
 import Button from '../../components/Button/Button';
 import ErrorHandler from '../../components/ErrorHandler';
 import FeedEdit from '../../components/Feed/FeedEdit';
-import Post from '../../components/Feed/Post';
+import PostItem from '../../components/Feed/PostItem';
 import Form from '../../components/Form/Form';
 import Input from '../../components/Input';
 import Loader from '../../components/Loader';
 import Paginator from '../../components/Paginator';
-import { IPost, PostFormData } from '../../store/feed/interfaces';
+import { Post, PostForm } from '../../store/feed';
 import useFormHook from '../../util/useFormHook';
 import useFeedQueries from './useFeedQueries';
 
@@ -23,28 +22,17 @@ const defaultValues: FeedData = { status: '' };
 const Feed: React.FC = () => {
   const [page, setPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const formHook = useFormHook(schema, defaultValues);
   const { queries, mutations, loaders, error } = useFeedQueries(page);
-  const { data, dataFetched, refetch, status, statusFetched } = queries;
+  const { postsResult, refetch, status, statusFetched } = queries;
   const { createPost, deletePost, updatePost, updateStatus } = mutations;
   const { mainLoading, editLoading } = loaders;
-  const socketRef = useRef<{ socket: Socket | null }>({ socket: null });
 
   useEffect(() => {
     if (statusFetched) formHook.reset({ status });
   }, [statusFetched]);
-
-  useEffect(() => {
-    if (dataFetched && !socketRef.current.socket) {
-      const socket = openSocket(import.meta.env.VITE_BACKEND_URL);
-      socket.on('posts', (/* { payload: {...}} */) => {
-        refetch();
-      });
-      socketRef.current.socket = socket;
-    }
-  }, [dataFetched]);
 
   //#region TEMP COMMENTS
   const statusUpdate = async (data: { status: string }) => {
@@ -52,7 +40,7 @@ const Feed: React.FC = () => {
   };
 
   const startEdit = (id: string) => () => {
-    const post = data?.posts?.find((p) => p._id === id);
+    const post = postsResult?.posts?.find((p) => p._id === id);
     if (!post) return;
     setSelectedPost(post);
     setIsEditing(true);
@@ -63,21 +51,22 @@ const Feed: React.FC = () => {
     setIsEditing(false);
   };
 
-  const finishEdit = async (data: PostFormData) => {
+  const finishEdit = async (formData: PostForm) => {
+    const { image: _image, ...data } = formData;
     if (selectedPost) {
-      await updatePost({ ...data, _id: selectedPost._id, imageUrl: selectedPost.imageUrl });
+      await updatePost({ ...data, id: selectedPost._id });
     } else {
       await createPost(data);
     }
     setSelectedPost(null);
     setIsEditing(false);
-    // refetch();
+    refetch();
   };
 
   const deletePostHandler = (id: string) => async () => {
-    await deletePost(id);
+    await deletePost({ id });
     setPage(1);
-    // refetch();
+    refetch();
   };
 
   const newPostHandler = () => {
@@ -85,8 +74,8 @@ const Feed: React.FC = () => {
   };
 
   const loadPosts = (direction: number) => () => {
-    if (!data) return;
-    const maxPage = Math.ceil(data.totalItems / 2);
+    if (!postsResult) return;
+    const maxPage = Math.ceil(postsResult.totalItems / 2);
     const newPage = page + direction;
 
     if (newPage === 0 || newPage > maxPage) {
@@ -124,16 +113,16 @@ const Feed: React.FC = () => {
           <div tw="text-center mt-8">
             <Loader />
           </div>
-        ) : !data || data.posts.length === 0 ? (
+        ) : !postsResult || postsResult.posts.length === 0 ? (
           <p tw="text-center">No posts found.</p>
         ) : (
           <Paginator
             onPrevious={loadPosts(-1)}
             onNext={loadPosts(1)}
-            lastPage={Math.ceil(data.totalItems / 2)}
+            lastPage={Math.ceil(postsResult.totalItems / 2)}
             currentPage={page}>
-            {data.posts.map((post) => (
-              <Post
+            {postsResult.posts.map((post) => (
+              <PostItem
                 key={post._id}
                 id={post._id}
                 author={post.creator.name}

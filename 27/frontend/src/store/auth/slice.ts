@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { readAllFromStorage, removeStorageValues, saveToStorage } from '../../util/storage';
-import { LoginResponse } from './apis';
 
 type AuthState = { isAuth: boolean; userId: string };
+type Credentials = { userId: string; token: string };
 
 const slice = createSlice({
   name: 'auth',
   initialState: { userId: '', isAuth: false } as AuthState,
   reducers: {
-    setCredentials: (state, { payload: { userId, token } }: PayloadAction<LoginResponse>) => {
+    setCredentials: (state, { payload: { userId, token } }: PayloadAction<Credentials>) => {
       state.userId = userId;
       state.isAuth = true;
       saveToStorage(token, userId);

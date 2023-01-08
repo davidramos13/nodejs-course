@@ -1,0 +1,16 @@
+query GetPosts($page: Int!) {
+  posts(page: $page) {
+    posts {
+      _id
+      title
+      content
+      imageUrl
+      createdAt
+      updatedAt
+      creator {
+        name
+      }
+    }
+    totalItems
+  }
+}

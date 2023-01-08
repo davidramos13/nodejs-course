@@ -24,7 +24,7 @@ type Props = {
   onStartEdit(): void;
   onDelete(): void;
 };
-const Post: React.FC<Props> = (props) => {
+const PostItem: React.FC<Props> = (props) => {
   const { id, author, date, title, onStartEdit, onDelete, loading } = props;
 
   const onView = noop;
@@ -56,4 +56,4 @@ const Post: React.FC<Props> = (props) => {
   );
 };
 
-export default Post;
+export default PostItem;

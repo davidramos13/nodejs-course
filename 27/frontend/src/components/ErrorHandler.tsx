@@ -1,21 +1,36 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { ErrorResponse } from '@rtk-query/graphql-request-base-query/dist/GraphqlBaseQueryTypes';
 import React, { Fragment, useEffect, useState } from 'react';
 import Backdrop from './Backdrop';
 import Modal from './Modal';
 
-export type RtkError = SerializedError | FetchBaseQueryError;
+export type RtkError = SerializedError | FetchBaseQueryError | ErrorResponse;
+
+const add = (label: string, data?: string | number) => {
+  if (!data) return '';
+  return `${label}: ${data}`;
+};
 
 const getMessage = (error: RtkError) => {
+  const lines: string[] = [];
   if ('status' in error) {
     const { status } = error;
-    if (status === 'FETCH_ERROR' || status === 'CUSTOM_ERROR') return `${error.error}`;
+    if (status === 'FETCH_ERROR' || status === 'CUSTOM_ERROR')
+      lines.push(add('Error', error.error));
     else if (status === 'PARSING_ERROR') {
-      return `${error.error}\nOriginal Status: ${error.originalStatus}`;
-    } else return `${status} - Data: ${JSON.stringify(error.data)}`; // status is TIMEOUT_ERROR or number here
+      lines.push(add('Error', error.error), add('Original Status', error.originalStatus));
+    } else {
+      lines.push(add('Status', status)); // status is TIMEOUT_ERROR or number here
+    }
+  } else if ('code' in error) {
+    const { name, code, message } = error;
+    lines.push(add('Error', name), add('Code', code), add('Message', message));
+  } else {
+    const { name, message } = error;
+    lines.push(add('Error', name), add('Message', message));
   }
-
-  return `${error.code} - ${error.name} - ${error.message}`;
+  return lines.join('\n');
 };
 
 type Props = { error?: RtkError };
