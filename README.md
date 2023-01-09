@@ -65,8 +65,6 @@ I was mostly interested on the practical aspect of coding for the backend on Nod
 
 # Remarks
 
-- Any private keys or secrets that could be found around the source code are not valid now, I reviewed and resetted them all. Anyways starting from module 25 I use .env to configure these locally, this file is not uploaded to GitHub. The .env.example provided files show how to configure .env files locally.
-
 - I'm considering hosting some of these projects in heroku or some other hosting provider such that you can play around with the applications. I'm also considering adding some unit testing to show some examples (not for all the application). The course has a module on that, using mocha & chai, and I already had experience testing React with Jest (also testing .NET previously). I prefer to do this on my own, using newer mechanisms for mocking and asynchronous testing for example, among other things.
 
 <br>
