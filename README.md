@@ -63,12 +63,6 @@ I was mostly interested on the practical aspect of coding for the backend on Nod
 
 <br>
 
-# Remarks
-
-- I'm considering hosting some of these projects in heroku or some other hosting provider such that you can play around with the applications. I'm also considering adding some unit testing to show some examples (not for all the application). The course has a module on that, using mocha & chai, and I already had experience testing React with Jest (also testing .NET previously). I prefer to do this on my own, using newer mechanisms for mocking and asynchronous testing for example, among other things.
-
-<br>
-
 # Certificate
 
  ![NodeJS course certificate](certificate.jpg)
