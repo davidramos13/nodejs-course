@@ -1,5 +1,5 @@
-import { DefaultValues, useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { DefaultValues, FieldValues, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 type DefaultType<T> = DefaultValues<T> | ((payload?: unknown) => Promise<T>);

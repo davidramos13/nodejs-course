@@ -1,16 +1,17 @@
 import React, { Fragment } from 'react';
 import tw from 'twin.macro';
+import { z } from 'zod';
+
+import { Post, PostForm } from '../../store/feed';
+import { usePutImageMutation } from '../../store/postImage';
 import useFormHook from '../../util/useFormHook';
 import Backdrop from '../Backdrop';
 import Form from '../Form/Form';
-import Input from '../Input';
 import Image from '../Image';
+import Input from '../Input';
+import FilePicker from '../Input/FilePicker';
 import TextArea from '../Input/TextArea';
 import Modal from '../Modal';
-import { z } from 'zod';
-import FilePicker from '../Input/FilePicker';
-import { Post, PostForm } from '../../store/feed';
-import { usePutImageMutation } from '../../store/postImage';
 
 const DivPreview = tw.div`w-60 h-28`;
 

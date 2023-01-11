@@ -4,28 +4,27 @@ module.exports = {
     browser: true,
     es2022: true,
   },
+  root: true,
   plugins: [
     'react',
     '@typescript-eslint',
     'import',
-    'jsx-a11y',
     'react-hooks',
-    'prettier',
     'simple-import-sort',
+    'prettier',
   ],
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:jsx-a11y/recommended',
     'plugin:import/typescript',
     'plugin:react/jsx-runtime',
-    'plugin:prettier/recommended',
-    'prettier',
+    'plugin:prettier/recommended', // Make sure this is always the last element in the array.
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: { jsx: true },
-    ecmaVersion: 'latest',
+    ecmaVersion: 2020,
     sourceType: 'module',
   },
   rules: {
@@ -42,26 +41,23 @@ module.exports = {
     'react/no-unknown-property': [2, { ignore: ['tw'] }],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'off',
-    'prettier/prettier': [
-      'warn',
-      {
-        endOfLine: 'auto',
-        singleQuote: true,
-      },
-    ],
+    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'react/react-in-jsx-scope': 'off',
+    'jsx-a11y/accessible-emoji': 'off',
+    'react/prop-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
   },
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
-      extends: ['plugin:@typescript-eslint/recommended'],
-      parserOptions: {
-        project: ['./tsconfig.json'],
-      },
-    },
-  ],
   settings: {
     react: {
       version: 'detect',
+    },
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
     },
   },
 };

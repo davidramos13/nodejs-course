@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import tw from 'twin.macro';
+
 import Image from '../../components/Image';
 import { useGetPostQuery } from '../../store/feed';
 

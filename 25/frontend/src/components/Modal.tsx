@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react';
 import ReactDOM from 'react-dom';
 import tw from 'twin.macro';
+
 import Button from './Button/Button';
 
 const DivModal = tw.div`fixed w-[90%] left-[5%] top-[20vh]

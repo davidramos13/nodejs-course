@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import Feed from './pages/Feed/Feed';

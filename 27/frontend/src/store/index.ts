@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+
 import { authApi } from './auth/apis';
 import authReducer from './auth/slice';
 import { postsApi } from './feed/apis';

@@ -1,10 +1,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import GlobalStyles from './styles/GlobalStyles';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+
+import App from './App';
 import store from './store';
+import GlobalStyles from './styles/GlobalStyles';
 
 console.log('backend url:', import.meta.env.VITE_BACKEND_URL);
 

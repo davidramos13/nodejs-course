@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+
 import authReducer from './auth/slice';
 import { api } from './graphql/api';
 import { api as authApi } from './graphql/authApi';

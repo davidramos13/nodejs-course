@@ -1,5 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+
 import { readAllFromStorage, removeStorageValues, saveToStorage } from '../../util/storage';
 
 type AuthState = { isAuth: boolean; userId: string };

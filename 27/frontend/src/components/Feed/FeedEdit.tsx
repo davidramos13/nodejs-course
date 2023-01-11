@@ -1,16 +1,17 @@
 import React, { Fragment, useState } from 'react';
 import tw from 'twin.macro';
+import { z } from 'zod';
+
+import { IPost, PostFormData } from '../../store/feed/interfaces';
+import { generateBase64FromImage } from '../../util/image';
 import useFormHook from '../../util/useFormHook';
 import Backdrop from '../Backdrop';
 import Form from '../Form/Form';
-import Input from '../Input';
 import Image from '../Image';
+import Input from '../Input';
+import FilePicker from '../Input/FilePicker';
 import TextArea from '../Input/TextArea';
 import Modal from '../Modal';
-import { IPost, PostFormData } from '../../store/feed/interfaces';
-import { z } from 'zod';
-import { generateBase64FromImage } from '../../util/image';
-import FilePicker from '../Input/FilePicker';
 
 const DivPreview = tw.div`w-60 h-28`;
 

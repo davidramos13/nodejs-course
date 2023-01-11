@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 import { readTokenFromStorage } from '../../util/storage';
 import { IPost, PostFormData } from './interfaces';
 

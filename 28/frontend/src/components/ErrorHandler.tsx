@@ -2,6 +2,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { ErrorResponse } from '@rtk-query/graphql-request-base-query/dist/GraphqlBaseQueryTypes';
 import React, { Fragment, useEffect, useState } from 'react';
+
 import Backdrop from './Backdrop';
 import Modal from './Modal';
 

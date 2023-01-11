@@ -1,5 +1,6 @@
 import React from 'react';
 import tw from 'twin.macro';
+
 import Image from './Image';
 
 const DivAvatar = tw.div`w-40 h-40 my-2 mx-auto rounded-full overflow-hidden`;

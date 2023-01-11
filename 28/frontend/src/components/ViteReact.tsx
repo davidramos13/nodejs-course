@@ -1,5 +1,6 @@
 import React from 'react';
 import tw from 'twin.macro';
+
 import reactLogo from '../assets/react.svg';
 
 const DivContainer = tw.div`fixed right-0 bottom-0`;
